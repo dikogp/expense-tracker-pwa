@@ -8,15 +8,15 @@ const Auth = {
   init: function () {
     // Import security module
     this.initSecurityModule();
-
+    
     // Check if user is already logged in with valid session
     const savedUser = localStorage.getItem("currentUser");
     const sessionToken = sessionStorage.getItem("sessionToken");
-
+    
     if (savedUser && sessionToken) {
       try {
         const userData = JSON.parse(savedUser);
-
+        
         // Validate session token
         if (this.validateSession(sessionToken)) {
           this.currentUser = userData;
@@ -40,29 +40,24 @@ const Auth = {
   },
 
   // Initialize security module
-  initSecurityModule: async function () {
+  initSecurityModule: async function() {
     // For demo purposes, we'll use a simplified security implementation
     this.securityModule = {
       hashPassword: async (password) => {
         const encoder = new TextEncoder();
         const data = encoder.encode(password + "salt_" + Date.now());
-        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-        return Array.from(new Uint8Array(hashBuffer))
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("");
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
       },
       sanitizeInput: (input) => {
-        if (typeof input !== "string") return input;
-        return input
-          .replace(/[<>]/g, "")
-          .replace(/javascript:/gi, "")
-          .trim();
+        if (typeof input !== 'string') return input;
+        return input.replace(/[<>]/g, '').replace(/javascript:/gi, '').trim();
       },
       escapeHtml: (text) => {
-        const div = document.createElement("div");
+        const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
-      },
+      }
     };
   },
 
@@ -132,12 +127,8 @@ const Auth = {
 
       if (user) {
         // Verify password with enhanced hashing
-        const isValidPassword = await this.verifyPassword(
-          password,
-          user.passwordHash,
-          user.salt
-        );
-
+        const isValidPassword = await this.verifyPassword(password, user.passwordHash, user.salt);
+        
         if (isValidPassword) {
           this.recordLoginAttempt(email, true);
           this.loginUser(user);
@@ -184,10 +175,7 @@ const Auth = {
 
     // Strong password validation
     if (!this.isStrongPassword(password)) {
-      showToast(
-        "Password harus minimal 8 karakter, mengandung huruf besar, kecil, angka, dan simbol",
-        "error"
-      );
+      showToast("Password harus minimal 8 karakter, mengandung huruf besar, kecil, angka, dan simbol", "error");
       return;
     }
 
@@ -207,9 +195,7 @@ const Auth = {
 
       // Generate secure password hash
       const salt = this.generateSalt();
-      const passwordHash = await this.securityModule.hashPassword(
-        password + salt
-      );
+      const passwordHash = await this.securityModule.hashPassword(password + salt);
 
       // Create new user with enhanced security
       const newUser = {
@@ -226,7 +212,7 @@ const Auth = {
           currency: "IDR",
           categories: this.getDefaultCategories(),
           isPremium: false,
-          premiumExpiry: null,
+          premiumExpiry: null
         },
       };
 
@@ -255,15 +241,15 @@ const Auth = {
       createdAt: user.createdAt,
       lastLogin: new Date().toISOString(),
       settings: user.settings,
-      isPremium: user.settings?.isPremium || false,
+      isPremium: user.settings?.isPremium || false
     };
 
     this.currentUser = safeUser;
-
+    
     // Store user data and session token securely
     localStorage.setItem("currentUser", JSON.stringify(safeUser));
     sessionStorage.setItem("sessionToken", this.sessionToken);
-
+    
     // Update last login time in user database
     this.updateLastLogin(user.id);
 
@@ -275,30 +261,30 @@ const Auth = {
     // Clear user data and session
     this.currentUser = null;
     this.sessionToken = null;
-
+    
     // Remove stored data
     localStorage.removeItem("currentUser");
     sessionStorage.removeItem("sessionToken");
-
+    
     // Clear any cached sensitive data
     this.clearSensitiveCache();
-
+    
     this.showAuthScreen();
     showToast("Logout berhasil", "success");
   },
 
   // Clear sensitive cached data
-  clearSensitiveCache: function () {
+  clearSensitiveCache: function() {
     // Clear session storage encryption keys
-    Object.keys(sessionStorage).forEach((key) => {
-      if (key.startsWith("key_") || key.startsWith("cache_")) {
+    Object.keys(sessionStorage).forEach(key => {
+      if (key.startsWith('key_') || key.startsWith('cache_')) {
         sessionStorage.removeItem(key);
       }
     });
   },
 
   // Clear session data
-  clearSession: function () {
+  clearSession: function() {
     localStorage.removeItem("currentUser");
     sessionStorage.removeItem("sessionToken");
     this.currentUser = null;
@@ -336,116 +322,16 @@ const Auth = {
     }
   },
 
-  // Enhanced security methods
-  generateSalt: function () {
-    const array = new Uint8Array(16);
-    crypto.getRandomValues(array);
-    return Array.from(array)
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-  },
-
-  // Verify password against stored hash
-  verifyPassword: async function (password, storedHash, salt) {
-    try {
-      const hashedPassword = await this.securityModule.hashPassword(
-        password + salt
-      );
-      return hashedPassword === storedHash;
-    } catch (error) {
-      console.error("Password verification failed:", error);
-      return false;
+  // Simple password hashing (for MVP only - use proper hashing in production)
+  hashPassword: function (password) {
+    // This is NOT secure and should be replaced with proper hashing
+    let hash = 0;
+    for (let i = 0; i < password.length; i++) {
+      const char = password.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash;
     }
-  },
-
-  // Strong password validation
-  isStrongPassword: function (password) {
-    if (password.length < 8) return false;
-
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumbers = /\d/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-    return hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar;
-  },
-
-  // Email validation
-  isValidEmail: function (email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  },
-
-  // Rate limiting methods
-  checkLoginAttempts: function (email) {
-    const key = `login_attempts_${email}`;
-    const attempts = JSON.parse(
-      localStorage.getItem(key) || '{"count": 0, "lastAttempt": 0}'
-    );
-    const now = Date.now();
-    const lockoutDuration = 15 * 60 * 1000; // 15 minutes
-    const maxAttempts = 5;
-
-    // Reset attempts after lockout duration
-    if (now - attempts.lastAttempt > lockoutDuration) {
-      attempts.count = 0;
-    }
-
-    if (attempts.count >= maxAttempts) {
-      const remainingTime = lockoutDuration - (now - attempts.lastAttempt);
-      if (remainingTime > 0) {
-        throw new Error(
-          `Terlalu banyak percobaan login. Coba lagi dalam ${Math.ceil(
-            remainingTime / 60000
-          )} menit.`
-        );
-      }
-    }
-
-    return true;
-  },
-
-  recordLoginAttempt: function (email, success = false) {
-    const key = `login_attempts_${email}`;
-    const attempts = JSON.parse(
-      localStorage.getItem(key) || '{"count": 0, "lastAttempt": 0}'
-    );
-
-    if (success) {
-      localStorage.removeItem(key);
-    } else {
-      attempts.count++;
-      attempts.lastAttempt = Date.now();
-      localStorage.setItem(key, JSON.stringify(attempts));
-    }
-  },
-
-  // Session management
-  generateSessionToken: function () {
-    const tokenData = {
-      id: this.generateUserId(),
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-    };
-    return btoa(JSON.stringify(tokenData));
-  },
-
-  validateSession: function (token) {
-    try {
-      const tokenData = JSON.parse(atob(token));
-      return tokenData.expiresAt > Date.now();
-    } catch (error) {
-      return false;
-    }
-  },
-
-  updateLastLogin: function (userId) {
-    const users = this.getStoredUsers();
-    const userIndex = users.findIndex((u) => u.id === userId);
-    if (userIndex !== -1) {
-      users[userIndex].lastLogin = new Date().toISOString();
-      localStorage.setItem("pengeluaranqu_users", JSON.stringify(users));
-    }
+    return hash.toString();
   },
 
   // Generate user ID
