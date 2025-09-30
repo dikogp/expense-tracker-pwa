@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengeluaranqu - Kelola Keuangan Harian dengan Mudah</title>
+    <meta name="description" content="Aplikasi PWA sederhana untuk mencatat pemasukan dan pengeluaran harian. Gratis, mudah digunakan, dan bisa diakses offline.">
+    <meta name="theme-color" content="#2196F3">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.svg">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Auth Screen -->
+    <div id="authScreen" class="auth-screen active">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="logo-large">
+                    <i class="icon-wallet"></i>
+                    <h1>Pengeluaranqu</h1>
+                    <p>Kelola keuangan harian dengan mudah</p>
+                </div>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
+                <h2>Masuk ke Akun Anda</h2>
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" name="email" required placeholder="nama@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Kata Sandi</label>
+                        <input type="password" id="loginPassword" name="password" required placeholder="Masukkan kata sandi">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="icon-login"></i>
+                        Masuk
+                    </button>
+                </form>
+                
+                <div class="auth-divider">
+                    <span>atau</span>
+                </div>
+                
+                <button class="btn-google" onclick="loginWithGoogle()">
+                    <i class="icon-google"></i>
+                    Masuk dengan Google
+                </button>
+                
+                <p class="auth-switch">
+                    Belum punya akun? 
+                    <button type="button" onclick="showRegister()" class="btn-text">Daftar di sini</button>
+                </p>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="registerForm" class="auth-form">
+                <h2>Buat Akun Baru</h2>
+                <form id="registerFormElement">
+                    <div class="form-group">
+                        <label for="registerName">Nama</label>
+                        <input type="text" id="registerName" name="name" required placeholder="Nama lengkap">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" name="email" required placeholder="nama@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Kata Sandi</label>
+                        <input type="password" id="registerPassword" name="password" required placeholder="Minimal 6 karakter">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Konfirmasi Kata Sandi</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Ulangi kata sandi">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="icon-user-plus"></i>
+                        Daftar
+                    </button>
+                </form>
+                
+                <div class="auth-divider">
+                    <span>atau</span>
+                </div>
+                
+                <button class="btn-google" onclick="registerWithGoogle()">
+                    <i class="icon-google"></i>
+                    Daftar dengan Google
+                </button>
+                
+                <p class="auth-switch">
+                    Sudah punya akun? 
+                    <button type="button" onclick="showLogin()" class="btn-text">Masuk di sini</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="main-app">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">
+                <i class="icon-wallet"></i>
+                Pengeluaranqu
+            </h1>
+            <div class="header-actions">
+                <button id="syncBtn" class="btn-icon" title="Sinkronisasi">
+                    <i class="icon-sync"></i>
+                </button>
+                <button id="settingsBtn" class="btn-icon" title="Pengaturan">
+                    <i class="icon-settings"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="dashboard">
+            <i class="icon-home"></i>
+            Dashboard
+        </button>
+        <button class="nav-tab" data-tab="add-expense">
+            <i class="icon-plus"></i>
+            Tambah
+        </button>
+        <button class="nav-tab" data-tab="history">
+            <i class="icon-list"></i>
+            Riwayat
+        </button>
+        <button class="nav-tab" data-tab="analytics">
+            <i class="icon-chart"></i>
+            Analisis
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Tab -->
+        <section id="dashboard" class="tab-content active">
+            <div class="container">
+                <!-- Summary Cards -->
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="icon-calendar"></i>
+                        </div>
+                        <div class="summary-info">
+                            <h3>Hari Ini</h3>
+                            <p class="amount" id="todayAmount">Rp 0</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="icon-week"></i>
+                        </div>
+                        <div class="summary-info">
+                            <h3>Minggu Ini</h3>
+                            <p class="amount" id="weekAmount">Rp 0</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="icon-month"></i>
+                        </div>
+                        <div class="summary-info">
+                            <h3>Bulan Ini</h3>
+                            <p class="amount" id="monthAmount">Rp 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Expenses -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Pengeluaran Terkini</h2>
+                        <button class="btn-text" onclick="switchTab('history')">Lihat Semua</button>
+                    </div>
+                    <div id="recentExpenses" class="expense-list">
+                        <div class="empty-state">
+                            <i class="icon-empty"></i>
+                            <p>Belum ada pengeluaran hari ini</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Add Button -->
+                <div class="quick-add">
+                    <button class="btn-fab" onclick="switchTab('add-expense')">
+                        <i class="icon-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add Expense Tab -->
+        <section id="add-expense" class="tab-content">
+            <div class="container">
+                <form id="expenseForm" class="expense-form">
+                    <div class="form-group">
+                        <label for="amount">Jumlah</label>
+                        <div class="amount-input">
+                            <span class="currency">Rp</span>
+                            <input type="number" id="amount" name="amount" placeholder="0" required min="0" step="1">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Kategori</label>
+                        <select id="category" name="category" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="makanan">🍽️ Makanan & Minuman</option>
+                            <option value="transportasi">🚗 Transportasi</option>
+                            <option value="belanja">🛒 Belanja</option>
+                            <option value="hiburan">🎬 Hiburan</option>
+                            <option value="kesehatan">🏥 Kesehatan</option>
+                            <option value="pendidikan">📚 Pendidikan</option>
+                            <option value="tagihan">💳 Tagihan</option>
+                            <option value="lainnya">📝 Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Deskripsi</label>
+                        <input type="text" id="description" name="description" placeholder="Contoh: Makan siang di warung">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Tanggal</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="time">Waktu</label>
+                        <input type="time" id="time" name="time" required>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        <i class="icon-save"></i>
+                        Simpan Pengeluaran
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- History Tab -->
+        <section id="history" class="tab-content">
+            <div class="container">
+                <!-- Filter Controls -->
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <select id="filterMonth">
+                            <option value="">Semua Bulan</option>
+                        </select>
+                        <select id="filterCategory">
+                            <option value="">Semua Kategori</option>
+                            <option value="makanan">🍽️ Makanan & Minuman</option>
+                            <option value="transportasi">🚗 Transportasi</option>
+                            <option value="belanja">🛒 Belanja</option>
+                            <option value="hiburan">🎬 Hiburan</option>
+                            <option value="kesehatan">🏥 Kesehatan</option>
+                            <option value="pendidikan">📚 Pendidikan</option>
+                            <option value="tagihan">💳 Tagihan</option>
+                            <option value="lainnya">📝 Lainnya</option>
+                        </select>
+                    </div>
+                    <button id="clearFilters" class="btn-secondary">Reset</button>
+                </div>
+
+                <!-- Total Amount -->
+                <div class="total-display">
+                    <h3>Total Pengeluaran: <span id="totalFiltered">Rp 0</span></h3>
+                </div>
+
+                <!-- Expense List -->
+                <div id="expenseList" class="expense-list">
+                    <div class="empty-state">
+                        <i class="icon-empty"></i>
+                        <p>Belum ada data pengeluaran</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Tab -->
+        <section id="analytics" class="tab-content">
+            <div class="container">
+                <!-- Chart Controls -->
+                <div class="chart-controls">
+                    <select id="chartPeriod">
+                        <option value="month">Bulan Ini</option>
+                        <option value="week">Minggu Ini</option>
+                        <option value="year">Tahun Ini</option>
+                    </select>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>Pengeluaran per Kategori</h3>
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Tren Pengeluaran</h3>
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Rata-rata Harian</h4>
+                        <p class="stat-value" id="dailyAverage">Rp 0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Kategori Tertinggi</h4>
+                        <p class="stat-value" id="topCategory">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Total Transaksi</h4>
+                        <p class="stat-value" id="totalTransactions">0</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Pengeluaran</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="editForm" class="modal-form">
+                <!-- Same form fields as add expense -->
+                <div class="form-group">
+                    <label for="editAmount">Jumlah</label>
+                    <div class="amount-input">
+                        <span class="currency">Rp</span>
+                        <input type="number" id="editAmount" name="amount" required min="0" step="1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editCategory">Kategori</label>
+                    <select id="editCategory" name="category" required>
+                        <option value="makanan">🍽️ Makanan & Minuman</option>
+                        <option value="transportasi">🚗 Transportasi</option>
+                        <option value="belanja">🛒 Belanja</option>
+                        <option value="hiburan">🎬 Hiburan</option>
+                        <option value="kesehatan">🏥 Kesehatan</option>
+                        <option value="pendidikan">📚 Pendidikan</option>
+                        <option value="tagihan">💳 Tagihan</option>
+                        <option value="lainnya">📝 Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editDescription">Deskripsi</label>
+                    <input type="text" id="editDescription" name="description">
+                </div>
+                <div class="form-group">
+                    <label for="editDate">Tanggal</label>
+                    <input type="date" id="editDate" name="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTime">Waktu</label>
+                    <input type="time" id="editTime" name="time" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
+                    <button type="submit" class="btn-primary">Simpan</button>
+                    <button type="button" class="btn-danger" id="deleteBtn">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/charts.js"></script>
+</body>
+</html>

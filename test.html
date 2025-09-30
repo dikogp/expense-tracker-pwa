@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Pengeluaranqu</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 10px; border: 1px solid #ddd; }
+        .pass { color: green; }
+        .fail { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Test Pengeluaranqu PWA</h1>
+    
+    <div class="test-section">
+        <h2>✅ Perbaikan Bug yang Dilakukan:</h2>
+        <ul>
+            <li class="pass">✓ Fixed input number step dari 1000 ke 1</li>
+            <li class="pass">✓ Improved form validation untuk amount input</li>
+            <li class="pass">✓ Added proper error styling dan messages</li>
+            <li class="pass">✓ Enhanced form submission dengan validasi yang lebih baik</li>
+            <li class="pass">✓ Created placeholder SVG icons</li>
+            <li class="pass">✓ Updated manifest dan service worker</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 Test Manual yang Perlu Dilakukan:</h2>
+        <ol>
+            <li>Buka <a href="http://localhost:8001">http://localhost:8001</a></li>
+            <li>Klik tab "Tambah"</li>
+            <li>Masukkan jumlah: 50000 (tanpa error)</li>
+            <li>Pilih kategori: Makanan & Minuman</li>
+            <li>Isi deskripsi: "Test pengeluaran"</li>
+            <li>Pastikan tanggal dan waktu terisi otomatis</li>
+            <li>Klik "Simpan Pengeluaran"</li>
+            <li>Periksa data muncul di Dashboard</li>
+            <li>Test edit dan hapus data</li>
+            <li>Test filter di tab Riwayat</li>
+            <li>Test chart di tab Analisis</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>📱 Test PWA Features:</h2>
+        <ul>
+            <li>Install PWA (klik icon di address bar)</li>
+            <li>Test offline functionality</li>
+            <li>Test responsive design di mobile</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔧 Development Server:</h2>
+        <p>Server berjalan di: <strong>http://localhost:8001</strong></p>
+        <p>Refresh halaman utama setelah melakukan perubahan</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>📂 File yang Diperbaiki:</h2>
+        <ul>
+            <li><code>index.html</code> - Fixed step attribute di input number</li>
+            <li><code>js/app.js</code> - Enhanced form validation dan submission</li>
+            <li><code>js/ui.js</code> - Improved input validation</li>
+            <li><code>css/style.css</code> - Added error styling</li>
+            <li><code>manifest.json</code> - Updated icons</li>
+            <li><code>sw.js</code> - Updated icon references</li>
+            <li><code>icons/*.svg</code> - Created placeholder icons</li>
+        </ul>
+    </div>
+</body>
+</html>
