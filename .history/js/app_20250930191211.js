@@ -215,11 +215,9 @@ class ExpenseTracker {
     this.currentView = sectionId;
 
     // Dispatch tab change event for enhanced features
-    document.dispatchEvent(
-      new CustomEvent("tab-changed", {
-        detail: { tab: sectionId, previousTab: this.currentView },
-      })
-    );
+    document.dispatchEvent(new CustomEvent('tab-changed', {
+      detail: { tab: sectionId, previousTab: this.currentView }
+    }));
 
     // Update section content
     switch (sectionId) {
@@ -584,11 +582,6 @@ class ExpenseTracker {
 
     // Simple chart implementation (pie chart)
     this.renderSimplePieChart(canvas, sortedCategories);
-
-    // Update category budgets if EnhancedFeatures is available
-    if (typeof EnhancedFeatures !== "undefined") {
-      EnhancedFeatures.CategoryBudgets.renderBudgetsList();
-    }
   }
 
   // FR-002: Quick add button visibility

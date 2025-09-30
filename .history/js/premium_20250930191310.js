@@ -25,7 +25,6 @@ const PremiumFeatures = {
     exportFormats: ["csv", "pdf", "excel"],
     cloudSync: true,
     advancedReports: true,
-    categoryBudgets: true,
     familySharing: true,
     customThemes: true,
     prioritySupport: true,
@@ -185,12 +184,11 @@ const PremiumFeatures = {
               <h4 class="font-bold mb-2">Pengeluaranqu Premium</h4>
               <div class="text-sm opacity-90">
                 ✨ Kategori unlimited<br>
-                🎯 Anggaran per kategori<br>
-                📊 Analisis mendalam<br>
+                📊 Laporan lanjutan<br>
                 ☁️ Sinkronisasi cloud<br>
                 👨‍👩‍👧‍👦 Berbagi keluarga<br>
                 🎨 Tema kustom<br>
-                📈 Prediksi keuangan
+                📈 Insight bulanan
               </div>
             </div>
           </div>
@@ -228,10 +226,7 @@ const PremiumFeatures = {
       exportFormats:
         "Ekspor data ke berbagai format (CSV, PDF, Excel) untuk analisis lebih lanjut.",
       cloudSync: "Sinkronisasi data otomatis di semua perangkat Anda.",
-      advancedReports:
-        "Dapatkan analisis mendalam dengan grafik tren, prediksi anggaran, dan insight personal.",
-      categoryBudgets:
-        "Atur anggaran terpisah untuk setiap kategori pengeluaran dengan monitoring real-time.",
+      advancedReports: "Laporan mendalam dengan analisis tren dan prediksi.",
       familySharing: "Berbagi anggaran dan pencatatan dengan anggota keluarga.",
       customThemes: "Personalisasi tampilan dengan berbagai tema eksklusif.",
       default: "Fitur ini tersedia untuk pengguna premium.",

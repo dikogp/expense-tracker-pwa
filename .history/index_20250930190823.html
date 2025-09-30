@@ -291,10 +291,7 @@
               <div class="section-header">
                 <h3>🎯 Anggaran per Kategori</h3>
                 <div class="section-actions">
-                  <button
-                    class="btn-secondary premium-feature"
-                    onclick="checkPremiumFeature('categoryBudgets')"
-                  >
+                  <button class="btn-secondary premium-feature" onclick="checkPremiumFeature('categoryBudgets')">
                     ➕ Tambah Anggaran
                     <span class="premium-badge">⭐</span>
                   </button>
@@ -302,12 +299,9 @@
               </div>
               <div id="categoryBudgetsList" class="category-budgets-list">
                 <div class="empty-state">
-                  🎯 <br />
+                  🎯 <br/>
                   <p>Belum ada anggaran kategori</p>
-                  <small
-                    >Upgrade ke Premium untuk mengatur anggaran per
-                    kategori</small
-                  >
+                  <small>Upgrade ke Premium untuk mengatur anggaran per kategori</small>
                 </div>
               </div>
             </div>
@@ -603,7 +597,7 @@
                     </div>
                   </div>
                 </div>
-
+                
                 <div class="teaser-features">
                   <h4>Yang Anda Dapatkan dengan Premium:</h4>
                   <ul class="feature-list">
@@ -619,10 +613,7 @@
                 </div>
 
                 <div class="teaser-cta">
-                  <button
-                    class="btn-premium-large"
-                    onclick="PremiumFeatures.showPricingPlans()"
-                  >
+                  <button class="btn-premium-large" onclick="PremiumFeatures.showPricingPlans()">
                     🚀 Unlock Analytics Premium
                     <span class="price-tag">Mulai Rp 29.000/bulan</span>
                   </button>
@@ -631,11 +622,8 @@
             </div>
 
             <!-- Premium Analytics Content (Hidden for free users) -->
-            <div
-              class="analytics-content premium-only"
-              id="analyticsContent"
-              style="display: none"
-            >
+            <div class="analytics-content premium-only" id="analyticsContent" style="display: none;">
+              
               <!-- Trend Analysis -->
               <div class="analytics-section">
                 <h3>📈 Analisis Tren Pengeluaran</h3>
@@ -659,11 +647,7 @@
                 <h3>🏆 Analisis Kategori Detail</h3>
                 <div class="category-breakdown">
                   <div class="chart-container">
-                    <canvas
-                      id="categoryTrendChart"
-                      width="400"
-                      height="200"
-                    ></canvas>
+                    <canvas id="categoryTrendChart" width="400" height="200"></canvas>
                   </div>
                   <div class="category-stats" id="categoryAnalytics">
                     <!-- Dynamic content -->
@@ -677,19 +661,13 @@
                 <div class="prediction-grid">
                   <div class="prediction-card">
                     <h4>📅 Estimasi Bulan Depan</h4>
-                    <div class="prediction-value" id="nextMonthPrediction">
-                      Rp 0
-                    </div>
-                    <div class="prediction-confidence">
-                      Akurasi: <span id="predictionAccuracy">85%</span>
-                    </div>
+                    <div class="prediction-value" id="nextMonthPrediction">Rp 0</div>
+                    <div class="prediction-confidence">Akurasi: <span id="predictionAccuracy">85%</span></div>
                   </div>
                   <div class="prediction-card">
                     <h4>💰 Target Penghematan</h4>
                     <div class="prediction-value" id="savingsTarget">Rp 0</div>
-                    <div class="prediction-confidence">
-                      Potensi: <span id="savingsPotential">15%</span>
-                    </div>
+                    <div class="prediction-confidence">Potensi: <span id="savingsPotential">15%</span></div>
                   </div>
                 </div>
               </div>
@@ -709,6 +687,7 @@
                   </button>
                 </div>
               </div>
+
             </div>
           </div>
         </section>
@@ -723,11 +702,7 @@
           ➕<br />Tambah
         </button>
         <button class="nav-tab" data-tab="history">📋<br />Riwayat</button>
-        <button
-          class="nav-tab premium-feature"
-          data-tab="analytics"
-          onclick="checkPremiumFeature('advancedReports')"
-        >
+        <button class="nav-tab premium-feature" data-tab="analytics" onclick="checkPremiumFeature('advancedReports')">
           📊<br />Analisis
           <span class="premium-badge">⭐</span>
         </button>
@@ -953,74 +928,9 @@
       </div>
     </div>
 
-    <!-- Category Budget Modal -->
-    <div id="categoryBudgetModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>🎯 Atur Anggaran Kategori</h3>
-          <button
-            class="modal-close"
-            onclick="closeModal('categoryBudgetModal')"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="modal-body">
-          <form id="categoryBudgetForm">
-            <div class="form-group">
-              <label for="budgetCategory">📂 Pilih Kategori</label>
-              <select id="budgetCategory" name="category" required>
-                <option value="">-- Pilih Kategori --</option>
-                <!-- Populated by JavaScript -->
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="categoryBudgetAmount">💰 Jumlah Anggaran</label>
-              <div class="amount-input">
-                <span class="currency">Rp</span>
-                <input
-                  type="number"
-                  id="categoryBudgetAmount"
-                  name="amount"
-                  placeholder="0"
-                  min="0"
-                  step="10000"
-                  required
-                />
-              </div>
-              <small class="form-help">
-                Tentukan batas maksimal pengeluaran untuk kategori ini
-              </small>
-            </div>
-            <div class="form-group">
-              <label for="budgetPeriod">📅 Periode</label>
-              <select id="budgetPeriod" name="period">
-                <option value="monthly">Bulanan</option>
-                <option value="weekly">Mingguan</option>
-                <option value="daily">Harian</option>
-              </select>
-            </div>
-            <div class="form-actions">
-              <button
-                type="button"
-                class="btn-secondary"
-                onclick="closeModal('categoryBudgetModal')"
-              >
-                Batal
-              </button>
-              <button type="submit" class="btn-primary">
-                💾 Simpan Anggaran
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
     <!-- Scripts -->
     <script src="js/security.js"></script>
     <script src="js/premium.js"></script>
-    <script src="js/enhanced-features.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script src="js/storage.js"></script>

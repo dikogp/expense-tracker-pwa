@@ -286,32 +286,6 @@
               </div>
             </div>
 
-            <!-- Category Budgets Section -->
-            <div class="section" id="categoryBudgetsSection">
-              <div class="section-header">
-                <h3>🎯 Anggaran per Kategori</h3>
-                <div class="section-actions">
-                  <button
-                    class="btn-secondary premium-feature"
-                    onclick="checkPremiumFeature('categoryBudgets')"
-                  >
-                    ➕ Tambah Anggaran
-                    <span class="premium-badge">⭐</span>
-                  </button>
-                </div>
-              </div>
-              <div id="categoryBudgetsList" class="category-budgets-list">
-                <div class="empty-state">
-                  🎯 <br />
-                  <p>Belum ada anggaran kategori</p>
-                  <small
-                    >Upgrade ke Premium untuk mengatur anggaran per
-                    kategori</small
-                  >
-                </div>
-              </div>
-            </div>
-
             <!-- Quick Actions -->
             <div class="quick-actions">
               <button
@@ -563,155 +537,6 @@
             </div>
           </div>
         </section>
-
-        <!-- Analytics Tab (Premium Feature) -->
-        <section id="analytics" class="tab-content">
-          <div class="container">
-            <div class="analytics-header">
-              <h2>📊 Analisis Keuangan Lanjutan</h2>
-              <div class="premium-indicator">
-                <span class="premium-badge">⭐ Fitur Premium</span>
-              </div>
-            </div>
-
-            <!-- Free User Teaser -->
-            <div class="analytics-teaser" id="analyticsTeaser">
-              <div class="teaser-content">
-                <div class="teaser-preview">
-                  <h3>🎯 Wawasan Keuangan yang Lebih Mendalam</h3>
-                  <div class="preview-cards">
-                    <div class="preview-card blurred">
-                      <h4>📈 Tren Pengeluaran</h4>
-                      <div class="fake-chart">
-                        <div class="chart-line"></div>
-                        <span class="chart-label">Analisis 12 bulan</span>
-                      </div>
-                    </div>
-                    <div class="preview-card blurred">
-                      <h4>💰 Prediksi Anggaran</h4>
-                      <div class="fake-stats">
-                        <div class="stat-bar"></div>
-                        <span class="stat-label">Estimasi bulan depan</span>
-                      </div>
-                    </div>
-                    <div class="preview-card blurred">
-                      <h4>🏆 Kategori Favorit</h4>
-                      <div class="fake-pie">
-                        <div class="pie-slice"></div>
-                        <span class="pie-label">Breakdown detail</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="teaser-features">
-                  <h4>Yang Anda Dapatkan dengan Premium:</h4>
-                  <ul class="feature-list">
-                    <li>📊 Grafik tren pengeluaran 12 bulan</li>
-                    <li>🎯 Prediksi anggaran bulan depan</li>
-                    <li>📈 Analisis perbandingan periode</li>
-                    <li>🏆 Ranking kategori pengeluaran</li>
-                    <li>💡 Rekomendasi penghematan personal</li>
-                    <li>📱 Laporan weekly dan monthly</li>
-                    <li>📄 Export laporan ke PDF/Excel</li>
-                    <li>🎨 Visualisasi data yang menarik</li>
-                  </ul>
-                </div>
-
-                <div class="teaser-cta">
-                  <button
-                    class="btn-premium-large"
-                    onclick="PremiumFeatures.showPricingPlans()"
-                  >
-                    🚀 Unlock Analytics Premium
-                    <span class="price-tag">Mulai Rp 29.000/bulan</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Premium Analytics Content (Hidden for free users) -->
-            <div
-              class="analytics-content premium-only"
-              id="analyticsContent"
-              style="display: none"
-            >
-              <!-- Trend Analysis -->
-              <div class="analytics-section">
-                <h3>📈 Analisis Tren Pengeluaran</h3>
-                <div class="chart-container">
-                  <canvas id="trendChart" width="400" height="200"></canvas>
-                </div>
-                <div class="trend-insights">
-                  <div class="insight-card">
-                    <h4>📊 Tren Bulan Ini</h4>
-                    <p id="monthlyTrend">Loading...</p>
-                  </div>
-                  <div class="insight-card">
-                    <h4>💡 Rekomendasi</h4>
-                    <p id="trendRecommendation">Loading...</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Category Analysis -->
-              <div class="analytics-section">
-                <h3>🏆 Analisis Kategori Detail</h3>
-                <div class="category-breakdown">
-                  <div class="chart-container">
-                    <canvas
-                      id="categoryTrendChart"
-                      width="400"
-                      height="200"
-                    ></canvas>
-                  </div>
-                  <div class="category-stats" id="categoryAnalytics">
-                    <!-- Dynamic content -->
-                  </div>
-                </div>
-              </div>
-
-              <!-- Predictions -->
-              <div class="analytics-section">
-                <h3>🔮 Prediksi Keuangan</h3>
-                <div class="prediction-grid">
-                  <div class="prediction-card">
-                    <h4>📅 Estimasi Bulan Depan</h4>
-                    <div class="prediction-value" id="nextMonthPrediction">
-                      Rp 0
-                    </div>
-                    <div class="prediction-confidence">
-                      Akurasi: <span id="predictionAccuracy">85%</span>
-                    </div>
-                  </div>
-                  <div class="prediction-card">
-                    <h4>💰 Target Penghematan</h4>
-                    <div class="prediction-value" id="savingsTarget">Rp 0</div>
-                    <div class="prediction-confidence">
-                      Potensi: <span id="savingsPotential">15%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Export Options -->
-              <div class="analytics-section">
-                <h3>📄 Export Laporan</h3>
-                <div class="export-options">
-                  <button class="btn-export" onclick="exportAnalytics('pdf')">
-                    📄 Export PDF
-                  </button>
-                  <button class="btn-export" onclick="exportAnalytics('excel')">
-                    📊 Export Excel
-                  </button>
-                  <button class="btn-export" onclick="exportAnalytics('csv')">
-                    📋 Export CSV
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
 
       <!-- Bottom Navigation -->
@@ -723,11 +548,7 @@
           ➕<br />Tambah
         </button>
         <button class="nav-tab" data-tab="history">📋<br />Riwayat</button>
-        <button
-          class="nav-tab premium-feature"
-          data-tab="analytics"
-          onclick="checkPremiumFeature('advancedReports')"
-        >
+        <button class="nav-tab premium-feature" data-tab="analytics" onclick="checkPremiumFeature('advancedReports')">
           📊<br />Analisis
           <span class="premium-badge">⭐</span>
         </button>
@@ -953,74 +774,9 @@
       </div>
     </div>
 
-    <!-- Category Budget Modal -->
-    <div id="categoryBudgetModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>🎯 Atur Anggaran Kategori</h3>
-          <button
-            class="modal-close"
-            onclick="closeModal('categoryBudgetModal')"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="modal-body">
-          <form id="categoryBudgetForm">
-            <div class="form-group">
-              <label for="budgetCategory">📂 Pilih Kategori</label>
-              <select id="budgetCategory" name="category" required>
-                <option value="">-- Pilih Kategori --</option>
-                <!-- Populated by JavaScript -->
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="categoryBudgetAmount">💰 Jumlah Anggaran</label>
-              <div class="amount-input">
-                <span class="currency">Rp</span>
-                <input
-                  type="number"
-                  id="categoryBudgetAmount"
-                  name="amount"
-                  placeholder="0"
-                  min="0"
-                  step="10000"
-                  required
-                />
-              </div>
-              <small class="form-help">
-                Tentukan batas maksimal pengeluaran untuk kategori ini
-              </small>
-            </div>
-            <div class="form-group">
-              <label for="budgetPeriod">📅 Periode</label>
-              <select id="budgetPeriod" name="period">
-                <option value="monthly">Bulanan</option>
-                <option value="weekly">Mingguan</option>
-                <option value="daily">Harian</option>
-              </select>
-            </div>
-            <div class="form-actions">
-              <button
-                type="button"
-                class="btn-secondary"
-                onclick="closeModal('categoryBudgetModal')"
-              >
-                Batal
-              </button>
-              <button type="submit" class="btn-primary">
-                💾 Simpan Anggaran
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
     <!-- Scripts -->
     <script src="js/security.js"></script>
     <script src="js/premium.js"></script>
-    <script src="js/enhanced-features.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script src="js/storage.js"></script>

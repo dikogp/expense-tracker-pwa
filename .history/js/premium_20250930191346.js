@@ -228,10 +228,8 @@ const PremiumFeatures = {
       exportFormats:
         "Ekspor data ke berbagai format (CSV, PDF, Excel) untuk analisis lebih lanjut.",
       cloudSync: "Sinkronisasi data otomatis di semua perangkat Anda.",
-      advancedReports:
-        "Dapatkan analisis mendalam dengan grafik tren, prediksi anggaran, dan insight personal.",
-      categoryBudgets:
-        "Atur anggaran terpisah untuk setiap kategori pengeluaran dengan monitoring real-time.",
+      advancedReports: "Dapatkan analisis mendalam dengan grafik tren, prediksi anggaran, dan insight personal.",
+      categoryBudgets: "Atur anggaran terpisah untuk setiap kategori pengeluaran dengan monitoring real-time.",
       familySharing: "Berbagi anggaran dan pencatatan dengan anggota keluarga.",
       customThemes: "Personalisasi tampilan dengan berbagai tema eksklusif.",
       default: "Fitur ini tersedia untuk pengguna premium.",
