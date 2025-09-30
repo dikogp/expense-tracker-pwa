@@ -385,10 +385,8 @@ class ExpenseTracker {
   }
 
   updateAllCategoryDropdowns() {
-    // Preserve current selection instead of forcing expense
-    const form = document.getElementById("transactionForm");
-    const currentType = form?.dataset.type || "expense";
-    this.updateCategoryOptions(currentType);
+    // Update main transaction form category dropdown (default to expense)
+    this.updateCategoryOptions("expense");
 
     // Update filter category dropdown
     this.updateFilterCategories();
@@ -665,13 +663,9 @@ class ExpenseTracker {
       monthExpenseEl.textContent = this.formatCurrency(monthExpense);
 
     // Keep compact/header balance element in sync if present
-    const smallBalance = document.querySelector(
-      ".user-balance .balance-amount"
-    );
+    const smallBalance = document.querySelector('.user-balance .balance-amount');
     if (smallBalance) {
-      smallBalance.textContent = this.formatCurrency(
-        monthIncome - monthExpense
-      );
+      smallBalance.textContent = this.formatCurrency(monthIncome - monthExpense);
     }
 
     // Update recent transactions
@@ -929,12 +923,6 @@ class ExpenseTracker {
     if (incomeEl) incomeEl.textContent = this.formatCurrency(totalIncome);
     if (expenseEl) expenseEl.textContent = this.formatCurrency(totalExpense);
 
-    // Net amount (income - expense)
-    const netEl = document.getElementById("netAmountFiltered");
-    if (netEl) {
-      netEl.textContent = this.formatCurrency(totalIncome - totalExpense);
-    }
-
     // Update transaction list
     container.innerHTML = filteredTransactions
       .sort((a, b) => b.timestamp - a.timestamp)
@@ -1025,7 +1013,7 @@ class ExpenseTracker {
   }
 
   updateBudget() {
-    // Always compute so dashboard budget card stays updated
+    if (this.currentView !== "budget") return;
 
     const thisMonth = new Date().toISOString().substring(0, 7);
     const budgetAmount = this.budget[thisMonth] || 0;

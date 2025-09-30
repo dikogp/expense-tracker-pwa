@@ -158,11 +158,11 @@ class ExpenseTracker {
     }
 
     // Filter dropdowns
-    const filterElements = ["filterMonth", "filterType", "filterCategory"];
-    filterElements.forEach((filterId) => {
+    const filterElements = ['filterMonth', 'filterType', 'filterCategory'];
+    filterElements.forEach(filterId => {
       const element = document.getElementById(filterId);
       if (element) {
-        element.addEventListener("change", () => {
+        element.addEventListener('change', () => {
           this.applyFilters();
         });
       }
@@ -196,24 +196,10 @@ class ExpenseTracker {
     const userId = this.currentUser.id;
     this.transactions =
       JSON.parse(localStorage.getItem(`transactions_${userId}`)) || [];
-
-    // Load categories from user settings or default
-    if (this.currentUser.settings && this.currentUser.settings.categories) {
-      this.categories = this.currentUser.settings.categories;
-    } else if (typeof Auth !== "undefined" && Auth.getDefaultCategories) {
-      this.categories = Auth.getDefaultCategories();
-    } else {
-      // Fallback default categories
-      this.categories = {
-        expense: this.getDefaultExpenseCategories(),
-        income: this.getDefaultIncomeCategories(),
-      };
-    }
-
+    this.categories =
+      JSON.parse(localStorage.getItem(`categories_${userId}`)) ||
+      Auth.getDefaultCategories();
     this.budget = JSON.parse(localStorage.getItem(`budget_${userId}`)) || {};
-
-    // Update UI after loading
-    this.updateUI();
   }
 
   saveUserData() {
@@ -286,9 +272,6 @@ class ExpenseTracker {
         setTimeout(() => {
           const amountInput = document.getElementById("amount");
           if (amountInput) amountInput.focus();
-
-          // Set default date and time
-          this.setDefaultDate();
         }, 100);
         break;
       case "analytics":
@@ -316,79 +299,33 @@ class ExpenseTracker {
 
   updateCategoryOptions(type) {
     const categorySelect = document.getElementById("category");
-    const quickCategorySelect = document.getElementById("quickAddCategory");
+    if (!categorySelect) return;
 
-    if (!categorySelect && !quickCategorySelect) return;
+    categorySelect.innerHTML = "";
 
-    // Get categories from current user settings
-    const user = Auth.getCurrentUser();
-    let categories = {};
+    const categories =
+      type === "income" ? this.categories.income : this.categories.expense;
 
-    if (user && user.settings && user.settings.categories) {
-      categories =
-        type === "income"
-          ? user.settings.categories.income
-          : user.settings.categories.expense;
-    } else {
-      // Fallback to default categories
-      categories =
-        type === "income"
-          ? this.getDefaultIncomeCategories()
-          : this.getDefaultExpenseCategories();
+    if (!categories) {
+      // If no categories, add a default option
+      const option = document.createElement("option");
+      option.value = "lainnya";
+      option.textContent = "Lainnya";
+      categorySelect.appendChild(option);
+      return;
     }
 
-    // Update main category select
-    if (categorySelect) {
-      categorySelect.innerHTML = "";
-      Object.entries(categories).forEach(([id, category]) => {
-        const option = document.createElement("option");
-        option.value = id;
-        option.textContent = `${category.icon || ""} ${category.name}`;
-        categorySelect.appendChild(option);
-      });
-    }
-
-    // Update quick add category select
-    if (quickCategorySelect) {
-      quickCategorySelect.innerHTML = "";
-      Object.entries(categories).forEach(([id, category]) => {
-        const option = document.createElement("option");
-        option.value = id;
-        option.textContent = `${category.icon || ""} ${category.name}`;
-        quickCategorySelect.appendChild(option);
-      });
-    }
-  }
-
-  getDefaultExpenseCategories() {
-    return {
-      makanan: { name: "Makanan & Minuman", icon: "🍽️", color: "#FF5722" },
-      transportasi: { name: "Transportasi", icon: "🚗", color: "#2196F3" },
-      belanja: { name: "Belanja", icon: "🛒", color: "#4CAF50" },
-      hiburan: { name: "Hiburan", icon: "🎬", color: "#9C27B0" },
-      kesehatan: { name: "Kesehatan", icon: "🏥", color: "#F44336" },
-      pendidikan: { name: "Pendidikan", icon: "📚", color: "#FF9800" },
-      tagihan: { name: "Tagihan", icon: "💳", color: "#607D8B" },
-      lainnya: { name: "Lainnya", icon: "📝", color: "#795548" },
-    };
-  }
-
-  getDefaultIncomeCategories() {
-    return {
-      gaji: { name: "Gaji", icon: "💰", color: "#4CAF50" },
-      freelance: { name: "Freelance", icon: "💻", color: "#2196F3" },
-      bisnis: { name: "Bisnis", icon: "🏢", color: "#FF9800" },
-      investasi: { name: "Investasi", icon: "📈", color: "#9C27B0" },
-      hadiah: { name: "Hadiah", icon: "🎁", color: "#E91E63" },
-      lainnya: { name: "Lainnya", icon: "💵", color: "#795548" },
-    };
+    Object.entries(categories).forEach(([id, category]) => {
+      const option = document.createElement("option");
+      option.value = id;
+      option.textContent = category.name;
+      categorySelect.appendChild(option);
+    });
   }
 
   updateAllCategoryDropdowns() {
-    // Preserve current selection instead of forcing expense
-    const form = document.getElementById("transactionForm");
-    const currentType = form?.dataset.type || "expense";
-    this.updateCategoryOptions(currentType);
+    // Update main transaction form category dropdown (default to expense)
+    this.updateCategoryOptions("expense");
 
     // Update filter category dropdown
     this.updateFilterCategories();
@@ -480,9 +417,6 @@ class ExpenseTracker {
       category: category,
       description: formData.get("description") || "",
       date: date,
-      time:
-        formData.get("time") ||
-        new Date().toTimeString().split(" ")[0].substring(0, 5),
       timestamp: Date.now(),
     };
 
@@ -502,52 +436,6 @@ class ExpenseTracker {
 
     // Go back to dashboard
     this.showSection("dashboard");
-  }
-
-  handleQuickAdd() {
-    const form = document.getElementById("quickAddForm");
-    const formData = new FormData(form);
-
-    // Validasi input
-    const amount = parseFloat(formData.get("amount"));
-    const category = formData.get("category");
-    const type = formData.get("type");
-
-    if (!amount || amount <= 0) {
-      this.showToast("Mohon masukkan jumlah yang valid", "error");
-      return;
-    }
-
-    if (!category) {
-      this.showToast("Mohon pilih kategori", "error");
-      return;
-    }
-
-    const transaction = {
-      id: Date.now().toString(),
-      type: type || "expense",
-      amount: amount,
-      category: category,
-      description: formData.get("description") || "",
-      date: new Date().toISOString().split("T")[0],
-      time: new Date().toTimeString().split(" ")[0].substring(0, 5),
-      timestamp: Date.now(),
-    };
-
-    this.transactions.push(transaction);
-    this.saveUserData();
-
-    // Reset form and close modal
-    form.reset();
-    closeModal("quickAddModal");
-
-    // Show success message
-    const typeText =
-      transaction.type === "income" ? "pemasukan" : "pengeluaran";
-    this.showToast(`${typeText} berhasil ditambahkan!`, "success");
-
-    // Update UI
-    this.updateUI();
   }
 
   deleteTransaction(id) {
@@ -580,19 +468,14 @@ class ExpenseTracker {
   }
 
   updateUI() {
-    // Core recalculations
     this.updateDashboard();
-    this.updateBudget();
-    this.updateBudgetStatus();
-
-    // Tab-specific updates
     this.updateHistory();
+    this.updateBudget();
     this.updateAnalytics();
-
-    // Ancillary UI elements
+    this.updateBalance();
     this.updateUserInfo();
 
-    // Refresh category dropdowns while preserving current type
+    // Initialize all category dropdowns
     this.updateAllCategoryDropdowns();
   }
 
@@ -663,16 +546,6 @@ class ExpenseTracker {
       monthIncomeEl.textContent = this.formatCurrency(monthIncome);
     if (monthExpenseEl)
       monthExpenseEl.textContent = this.formatCurrency(monthExpense);
-
-    // Keep compact/header balance element in sync if present
-    const smallBalance = document.querySelector(
-      ".user-balance .balance-amount"
-    );
-    if (smallBalance) {
-      smallBalance.textContent = this.formatCurrency(
-        monthIncome - monthExpense
-      );
-    }
 
     // Update recent transactions
     this.updateRecentTransactions();
@@ -877,155 +750,15 @@ class ExpenseTracker {
       summaryItems[2].querySelector(".amount").textContent =
         this.formatCurrency(balance);
 
-    // Apply current filters
-    this.applyFilters();
-  }
-
-  applyFilters() {
-    if (this.currentView !== "history") return;
-
-    const container = document.querySelector("#history .transaction-list");
-    if (!container) return;
-
-    // Get filter values
-    const monthFilter = document.getElementById("filterMonth")?.value || "";
-    const typeFilter = document.getElementById("filterType")?.value || "";
-    const categoryFilter =
-      document.getElementById("filterCategory")?.value || "";
-
-    // Filter transactions
-    let filteredTransactions = [...this.transactions];
-
-    if (monthFilter) {
-      filteredTransactions = filteredTransactions.filter((t) =>
-        t.date.startsWith(monthFilter)
-      );
-    }
-
-    if (typeFilter) {
-      filteredTransactions = filteredTransactions.filter(
-        (t) => t.type === typeFilter
-      );
-    }
-
-    if (categoryFilter) {
-      filteredTransactions = filteredTransactions.filter(
-        (t) => t.category === categoryFilter
-      );
-    }
-
-    // Update filtered summary
-    const totalIncome = filteredTransactions
-      .filter((t) => t.type === "income")
-      .reduce((sum, t) => sum + t.amount, 0);
-    const totalExpense = filteredTransactions
-      .filter((t) => t.type === "expense")
-      .reduce((sum, t) => sum + t.amount, 0);
-
-    // Update summary display
-    const incomeEl = document.getElementById("totalIncomeFiltered");
-    const expenseEl = document.getElementById("totalExpenseFiltered");
-
-    if (incomeEl) incomeEl.textContent = this.formatCurrency(totalIncome);
-    if (expenseEl) expenseEl.textContent = this.formatCurrency(totalExpense);
-
-    // Net amount (income - expense)
-    const netEl = document.getElementById("netAmountFiltered");
-    if (netEl) {
-      netEl.textContent = this.formatCurrency(totalIncome - totalExpense);
-    }
-
     // Update transaction list
-    container.innerHTML = filteredTransactions
+    container.innerHTML = monthTransactions
       .sort((a, b) => b.timestamp - a.timestamp)
       .map((transaction) => this.createTransactionElement(transaction))
       .join("");
-
-    // Initialize filter dropdowns if empty
-    this.populateFilterDropdowns();
-  }
-
-  clearFilters() {
-    // Reset all filter dropdowns
-    const filterElements = ["filterMonth", "filterType", "filterCategory"];
-    filterElements.forEach((filterId) => {
-      const element = document.getElementById(filterId);
-      if (element) {
-        element.value = "";
-      }
-    });
-
-    // Reapply filters (which will now show all transactions)
-    this.applyFilters();
-    this.showToast("Filter berhasil direset", "success");
-  }
-
-  populateFilterDropdowns() {
-    this.populateMonthFilter();
-    this.populateCategoryFilter();
-  }
-
-  populateMonthFilter() {
-    const select = document.getElementById("filterMonth");
-    if (!select) return;
-
-    // Get unique months from transactions
-    const months = [
-      ...new Set(this.transactions.map((t) => t.date.substring(0, 7))),
-    ];
-    months.sort().reverse();
-
-    // Keep first option, rebuild the rest
-    const firstOption = select.children[0];
-    select.innerHTML = "";
-    select.appendChild(firstOption);
-
-    months.forEach((month) => {
-      const option = document.createElement("option");
-      option.value = month;
-      option.textContent = new Date(month + "-01").toLocaleDateString("id-ID", {
-        year: "numeric",
-        month: "long",
-      });
-      select.appendChild(option);
-    });
-  }
-
-  populateCategoryFilter() {
-    const select = document.getElementById("filterCategory");
-    if (!select) return;
-
-    const user = Auth.getCurrentUser();
-    if (!user || !user.settings || !user.settings.categories) return;
-
-    // Keep first option
-    const firstOption = select.children[0];
-    select.innerHTML = "";
-    select.appendChild(firstOption);
-
-    // Add expense categories
-    const expenseCategories = user.settings.categories.expense || {};
-    Object.keys(expenseCategories).forEach((key) => {
-      const category = expenseCategories[key];
-      const option = document.createElement("option");
-      option.value = key;
-      option.textContent = `${category.icon} ${category.name}`;
-      select.appendChild(option);
-    });
-
-    // Add income categories
-    const incomeCategories = user.settings.categories.income || {};
-    Object.keys(incomeCategories).forEach((key) => {
-      const category = incomeCategories[key];
-      const option = document.createElement("option");
-      option.value = key;
-      option.textContent = `${category.icon} ${category.name}`;
-      select.appendChild(option);
-    });
   }
 
   updateBudget() {
-    // Always compute so dashboard budget card stays updated
+    if (this.currentView !== "budget") return;
 
     const thisMonth = new Date().toISOString().substring(0, 7);
     const budgetAmount = this.budget[thisMonth] || 0;
@@ -1676,65 +1409,4 @@ if (!document.querySelector("style[data-toast]")) {
         }
     `;
   document.head.appendChild(toastStyles);
-}
-
-// Global functions for onclick handlers and modal management
-function showModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    modal.classList.add("active");
-    // Focus first input if available
-    const firstInput = modal.querySelector("input, select, textarea");
-    if (firstInput) {
-      setTimeout(() => firstInput.focus(), 100);
-    }
-  }
-}
-
-function closeModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    modal.classList.remove("active");
-    // Reset forms in modal
-    const forms = modal.querySelectorAll("form");
-    forms.forEach((form) => form.reset());
-  }
-}
-
-function showQuickAdd(type) {
-  const modal = document.getElementById("quickAddModal");
-  const typeInput = document.getElementById("quickAddType");
-  const title = document.getElementById("quickAddTitle");
-
-  if (modal && typeInput && title) {
-    typeInput.value = type;
-    title.textContent =
-      type === "income" ? "➕ Tambah Pemasukan" : "➖ Tambah Pengeluaran";
-
-    // Update category options for quick add
-    if (window.app) {
-      window.app.updateCategoryOptions(type);
-    }
-
-    showModal("quickAddModal");
-  }
-}
-
-// Initialize app when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-  window.app = new ExpenseTracker();
-});
-
-// Service Worker Registration
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/sw.js")
-      .then((registration) => {
-        console.log("SW registered: ", registration);
-      })
-      .catch((registrationError) => {
-        console.log("SW registration failed: ", registrationError);
-      });
-  });
 }
