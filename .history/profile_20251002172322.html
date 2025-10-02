@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profil Pengguna - Pengeluaranqu</title>
+    <meta name="description" content="Profil dan pengaturan pengguna" />
+
+    <!-- Content Security Policy -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;"
+    />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pengeluaranqu" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.svg" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <div id="app">
+      <!-- Authentication Screen -->
+      <div id="authScreen" class="auth-screen">
+        <div class="auth-container">
+          <div class="auth-header">
+            <div class="logo-large">
+              <i class="icon-wallet"></i>
+              <h1>Pengeluaranqu</h1>
+              <p>Kelola keuangan harian dengan mudah</p>
+            </div>
+          </div>
+          <div id="loginForm" class="auth-form active">
+            <h2>Masuk ke Akun Anda</h2>
+            <form id="loginFormElement">
+              <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input
+                  type="email"
+                  id="loginEmail"
+                  name="email"
+                  required
+                  placeholder="nama@email.com"
+                />
+              </div>
+              <div class="form-group">
+                <label for="loginPassword">Kata Sandi</label>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  name="password"
+                  required
+                  placeholder="Masukkan kata sandi"
+                />
+              </div>
+              <button type="submit" class="btn-primary">Masuk</button>
+            </form>
+            <div class="auth-divider"><span>atau</span></div>
+            <button class="btn-guest" onclick="Auth.loginAsGuest()">
+              Masuk sebagai Tamu
+            </button>
+            <button class="btn-google" onclick="Auth.loginWithGoogle()">
+              Masuk dengan Google
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Application -->
+      <div id="mainApp" class="main-app">
+        <!-- Header -->
+        <header class="header">
+          <div class="container">
+            <div class="header-content">
+              <div
+                class="logo clickable-logo"
+                onclick="window.location.href='dashboard.html'"
+              >
+                <span class="logo-icon">💰</span>
+                <h1>Pengeluaranqu</h1>
+              </div>
+              <div class="header-info">
+                <span class="user-name" id="headerUserName">Pengguna</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <!-- Profile Content -->
+          <section id="profile" class="tab-content active">
+            <div class="container">
+              <div class="profile-header">
+                <h2>👤 Profil Pengguna</h2>
+              </div>
+              <div id="profileContent" class="profile-content">
+                <!-- Content will be populated by JavaScript -->
+              </div>
+
+              <!-- Quick Actions -->
+              <div class="profile-actions">
+                <button
+                  class="btn-secondary"
+                  onclick="window.app.exportUserData()"
+                >
+                  📤 Ekspor Data
+                </button>
+                <button
+                  class="btn-secondary premium-feature"
+                  onclick="checkPremiumFeature('dataSync')"
+                >
+                  🔄 Sinkronisasi
+                  <span class="premium-badge">⭐</span>
+                </button>
+                <button class="btn-danger" onclick="window.app.logout()">
+                  🚪 Keluar
+                </button>
+              </div>
+
+              <!-- Settings -->
+              <div class="settings-section">
+                <h3>⚙️ Pengaturan</h3>
+                <div class="setting-item">
+                  <label>🔔 Notifikasi</label>
+                  <input type="checkbox" id="enableNotifications" checked />
+                </div>
+                <div class="setting-item">
+                  <label>💰 Mata Uang</label>
+                  <select id="currencySelect">
+                    <option value="IDR">IDR (Rupiah)</option>
+                    <option value="USD">USD (Dollar)</option>
+                    <option value="EUR">EUR (Euro)</option>
+                  </select>
+                </div>
+                <div class="setting-item">
+                  <label>🌙 Mode Gelap</label>
+                  <input type="checkbox" id="darkModeToggle" />
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+          <a href="dashboard.html" class="nav-tab"> 🏠<br />Dashboard </a>
+          <a href="add-transaction.html" class="nav-tab"> ➕<br />Tambah </a>
+          <a href="history.html" class="nav-tab"> 📋<br />Riwayat </a>
+          <a
+            href="analytics.html"
+            class="nav-tab premium-feature"
+            onclick="checkPremiumFeature('advancedReports')"
+          >
+            📊<br />Analisis
+            <span class="premium-badge">⭐</span>
+          </a>
+          <a href="profile.html" class="nav-tab active"> 👤<br />Profil </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+      // Global authentication functions
+      window.Auth = {
+        loginAsGuest: function () {
+          const guestData = {
+            isAuthenticated: true,
+            isGuest: true,
+            id: "guest",
+            name: "Pengguna Tamu",
+            email: "",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(guestData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+
+        loginWithGoogle: function () {
+          console.log("Google login clicked");
+          // Mock Google login for demo
+          const userData = {
+            isAuthenticated: true,
+            isGuest: false,
+            id: "google_123",
+            name: "Pengguna Google",
+            email: "user@gmail.com",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(userData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+      };
+
+      // Initialize app for profile
+      document.addEventListener("DOMContentLoaded", function () {
+        // Ensure ExpenseTracker is loaded before using it
+        if (window.ExpenseTracker) {
+          window.app = window.ExpenseTracker;
+          window.app.init();
+          // Show only profile section
+          window.app.showSection("profile");
+        } else {
+          console.error(
+            "ExpenseTracker not found. Make sure app.js is loaded correctly."
+          );
+          setTimeout(() => {
+            if (window.ExpenseTracker) {
+              window.app = window.ExpenseTracker;
+              window.app.init();
+              window.app.showSection("profile");
+            }
+          }, 500); // Try again after a short delay
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+/* Profile Statistics Styles */
+#profileStats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    background-color: var(--surface-color-light);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.stat-value.income {
+    color: var(--success-color);
+}
+
+.stat-value.expense {
+    color: var(--danger-color);
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    #profileStats {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        margin: 0.75rem 0;
+    }
+    
+    .stat-item {
+        padding: 0.75rem;
+    }
+    
+    .stat-label {
+        font-size: 0.85rem;
+    }
+    
+    .stat-value {
+        font-size: 1rem;
+    }
+}

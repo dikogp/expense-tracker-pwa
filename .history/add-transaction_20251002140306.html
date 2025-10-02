@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tambah Transaksi - Pengeluaranqu</title>
+    <meta
+      name="description"
+      content="Tambah transaksi pemasukan dan pengeluaran"
+    />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pengeluaranqu" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.svg" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Authentication Screen -->
+      <div id="authScreen" class="auth-screen">
+        <!-- Auth content will be loaded here -->
+      </div>
+
+      <!-- Main Application -->
+      <div id="mainApp" class="main-app">
+        <!-- Header -->
+        <header class="header">
+          <div class="container">
+            <div class="header-content">
+              <div class="logo">
+                <span class="logo-icon">💰</span>
+                <h1>Pengeluaranqu</h1>
+              </div>
+              <div class="header-info">
+                <span class="balance-display"
+                  >Rp <span id="headerBalance">0</span></span
+                >
+                <span class="user-name" id="headerUserName">Pengguna</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <!-- Add Transaction Content -->
+          <section id="add-transaction" class="tab-content active">
+            <div class="container">
+              <div class="transaction-type-tabs">
+                <button class="type-tab active" data-type="expense">
+                  ➖ Pengeluaran
+                </button>
+                <button class="type-tab" data-type="income">
+                  ➕ Pemasukan
+                </button>
+              </div>
+
+              <form id="transactionForm" class="transaction-form">
+                <input
+                  type="hidden"
+                  id="transactionType"
+                  name="type"
+                  value="expense"
+                />
+
+                <div class="form-group">
+                  <label for="amount">💰 Jumlah</label>
+                  <div class="amount-input">
+                    <span class="currency">Rp</span>
+                    <input
+                      type="number"
+                      id="amount"
+                      name="amount"
+                      placeholder="0"
+                      required
+                      min="1"
+                      step="1"
+                      autofocus
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="category">📂 Kategori</label>
+                  <select id="category" name="category" required>
+                    <!-- Categories populated by JS -->
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="description">📝 Deskripsi (opsional)</label>
+                  <input
+                    type="text"
+                    id="description"
+                    name="description"
+                    placeholder="Contoh: Makan siang di warung"
+                  />
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="date">📅 Tanggal</label>
+                    <input type="date" id="date" name="date" required />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="time">🕐 Waktu</label>
+                    <input type="time" id="time" name="time" required />
+                  </div>
+                </div>
+
+                <button type="submit" class="btn-primary btn-large">
+                  💾 Simpan Transaksi
+                </button>
+              </form>
+            </div>
+          </section>
+        </main>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+          <a href="dashboard.html" class="nav-tab"> 🏠<br />Dashboard </a>
+          <a href="add-transaction.html" class="nav-tab active">
+            ➕<br />Tambah
+          </a>
+          <a href="history.html" class="nav-tab"> 📋<br />Riwayat </a>
+          <a
+            href="analytics.html"
+            class="nav-tab premium-feature"
+            onclick="checkPremiumFeature('advancedReports')"
+          >
+            📊<br />Analisis
+            <span class="premium-badge">⭐</span>
+          </a>
+          <a href="profile.html" class="nav-tab"> 👤<br />Profil </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+      // Initialize app for add transaction
+      document.addEventListener("DOMContentLoaded", function () {
+        window.app = new ExpenseTracker();
+        window.app.init();
+        // Show only add-transaction section
+        window.app.showSection("add-transaction");
+      });
+    </script>
+  </body>
+</html>

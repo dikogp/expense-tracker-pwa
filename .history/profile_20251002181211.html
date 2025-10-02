@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profil Pengguna - Pengeluaranqu</title>
+    <meta name="description" content="Profil dan pengaturan pengguna" />
+
+    <!-- Content Security Policy -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;"
+    />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pengeluaranqu" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.svg" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <div id="app">
+      <!-- Authentication Screen -->
+      <div id="authScreen" class="auth-screen">
+        <div class="auth-container">
+          <div class="auth-header">
+            <div class="logo-large">
+              <i class="icon-wallet"></i>
+              <h1>Pengeluaranqu</h1>
+              <p>Kelola keuangan harian dengan mudah</p>
+            </div>
+          </div>
+          <div id="loginForm" class="auth-form active">
+            <h2>Masuk ke Akun Anda</h2>
+            <form id="loginFormElement">
+              <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input
+                  type="email"
+                  id="loginEmail"
+                  name="email"
+                  required
+                  placeholder="nama@email.com"
+                />
+              </div>
+              <div class="form-group">
+                <label for="loginPassword">Kata Sandi</label>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  name="password"
+                  required
+                  placeholder="Masukkan kata sandi"
+                />
+              </div>
+              <button type="submit" class="btn-primary">Masuk</button>
+            </form>
+            <div class="auth-divider"><span>atau</span></div>
+            <button class="btn-guest" onclick="Auth.loginAsGuest()">
+              Masuk sebagai Tamu
+            </button>
+            <button class="btn-google" onclick="Auth.loginWithGoogle()">
+              Masuk dengan Google
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Application -->
+      <div id="mainApp" class="main-app">
+        <!-- Header -->
+        <header class="header">
+          <div class="container">
+            <div
+              class="logo clickable-logo"
+              onclick="window.app.showSection('dashboard')"
+            >
+              <span class="logo-icon">💰</span>
+              <h1>Pengeluaranqu</h1>
+            </div>
+            <div class="header-info">
+              <div class="user-greeting">
+                <span class="greeting-text" id="greetingText"
+                  >Selamat datang,</span
+                >
+                <span class="user-name" id="headerUserName">Pengguna</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <!-- Profile Content -->
+          <section id="profile" class="tab-content active">
+            <div class="container">
+              
+              <!-- Profile Hero Section -->
+              <div class="profile-hero">
+                <div class="profile-cover">
+                  <div class="cover-gradient"></div>
+                </div>
+                <div class="profile-avatar-section">
+                  <div class="avatar-container">
+                    <div class="profile-avatar" id="profileAvatar">
+                      <img src="icons/icon-192x192.svg" alt="Profile Picture" id="avatarImage">
+                      <div class="avatar-status online"></div>
+                    </div>
+                    <button class="avatar-edit-btn" onclick="editProfilePicture()">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m18 2 4 4-14 14H4v-4z"/>
+                        <path d="m14.5 5.5-4 4"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="profile-basic-info">
+                    <h1 class="profile-name" id="profileName">Pengguna Tamu</h1>
+                    <p class="profile-subtitle" id="profileSubtitle">Member sejak Oktober 2025</p>
+                    <div class="profile-badges">
+                      <span class="badge badge-primary" id="userTypeBadge">Tamu</span>
+                      <span class="badge badge-success">Aktif</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Profile Stats Grid -->
+              <div class="profile-stats-grid">
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                  </div>
+                  <div class="stat-info">
+                    <h3 class="stat-value" id="totalTransactions">0</h3>
+                    <p class="stat-label">Total Transaksi</p>
+                  </div>
+                </div>
+                
+                <div class="stat-card">
+                  <div class="stat-icon success">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M2 7l10 10L22 7"/>
+                    </svg>
+                  </div>
+                  <div class="stat-info">
+                    <h3 class="stat-value" id="totalIncome">Rp 0</h3>
+                    <p class="stat-label">Total Pemasukan</p>
+                  </div>
+                </div>
+                
+                <div class="stat-card">
+                  <div class="stat-icon danger">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 17l-10-10L2 17"/>
+                    </svg>
+                  </div>
+                  <div class="stat-info">
+                    <h3 class="stat-value" id="totalExpenses">Rp 0</h3>
+                    <p class="stat-label">Total Pengeluaran</p>
+                  </div>
+                </div>
+                
+                <div class="stat-card">
+                  <div class="stat-icon warning">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                  </div>
+                  <div class="stat-info">
+                    <h3 class="stat-value" id="daysSinceJoined">0</h3>
+                    <p class="stat-label">Hari Aktif</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Profile Information Cards -->
+              <div class="profile-cards-grid">
+                
+                <!-- Personal Information Card -->
+                <div class="profile-card">
+                  <div class="card-header">
+                    <div class="card-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                      </svg>
+                    </div>
+                    <h3>Informasi Pribadi</h3>
+                    <button class="edit-btn" onclick="editPersonalInfo()">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m18 2 4 4-14 14H4v-4z"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="card-content">
+                    <div class="info-item">
+                      <span class="info-label">Nama Lengkap</span>
+                      <span class="info-value" id="fullName">Pengguna Tamu</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Email</span>
+                      <span class="info-value" id="emailAddress">-</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Nomor Telepon</span>
+                      <span class="info-value" id="phoneNumber">-</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Bergabung Sejak</span>
+                      <span class="info-value" id="joinDate">Oktober 2025</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Preferences Card -->
+                <div class="profile-card">
+                  <div class="card-header">
+                    <div class="card-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="m12 1 1.09 4.91L18 7.09l-4.91 1.09L12 13l-1.09-4.91L6 7.09l4.91-1.09z"/>
+                      </svg>
+                    </div>
+                    <h3>Preferensi</h3>
+                  </div>
+                  <div class="card-content">
+                    <div class="preference-item">
+                      <div class="pref-info">
+                        <span class="pref-label">Mata Uang</span>
+                        <span class="pref-desc">Mata uang yang digunakan</span>
+                      </div>
+                      <select class="pref-select" id="currencySelect">
+                        <option value="IDR">IDR (Rupiah)</option>
+                        <option value="USD">USD (Dollar)</option>
+                        <option value="EUR">EUR (Euro)</option>
+                      </select>
+                    </div>
+                    
+                    <div class="preference-item">
+                      <div class="pref-info">
+                        <span class="pref-label">Notifikasi</span>
+                        <span class="pref-desc">Terima pemberitahuan transaksi</span>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="enableNotifications" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                    
+                    <div class="preference-item">
+                      <div class="pref-info">
+                        <span class="pref-label">Mode Gelap</span>
+                        <span class="pref-desc">Tampilan gelap untuk mata</span>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Security Card -->
+                <div class="profile-card">
+                  <div class="card-header">
+                    <div class="card-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                        <circle cx="12" cy="16" r="1"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      </svg>
+                    </div>
+                    <h3>Keamanan & Privasi</h3>
+                  </div>
+                  <div class="card-content">
+                    <button class="action-btn secondary" onclick="changePassword()">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                        <circle cx="12" cy="16" r="1"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      </svg>
+                      Ubah Kata Sandi
+                    </button>
+                    
+                    <button class="action-btn secondary" onclick="manage2FA()">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4"/>
+                        <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                        <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                      </svg>
+                      Autentikasi Dua Faktor
+                    </button>
+                    
+                    <button class="action-btn secondary" onclick="downloadData()">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7,10 12,15 17,10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                      </svg>
+                      Unduh Data Saya
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Premium Features Card -->
+                <div class="profile-card premium-card">
+                  <div class="premium-badge-large">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="12,2 15.09,8.26 22,9 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9 8.91,8.26"/>
+                    </svg>
+                    PREMIUM
+                  </div>
+                  <div class="card-header">
+                    <div class="card-icon premium">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l3.09 6.26L22 9l-5 4.87 1.18 6.88L12 17.77l-6.18 2.98L7 14.87 2 9l6.91-1.74z"/>
+                      </svg>
+                    </div>
+                    <h3>Fitur Premium</h3>
+                  </div>
+                  <div class="card-content">
+                    <div class="premium-features">
+                      <div class="feature-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="20,6 9,17 4,12"/>
+                        </svg>
+                        Analisis Lanjutan
+                      </div>
+                      <div class="feature-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="20,6 9,17 4,12"/>
+                        </svg>
+                        Sinkronisasi Cloud
+                      </div>
+                      <div class="feature-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="20,6 9,17 4,12"/>
+                        </svg>
+                        Export Data Unlimited
+                      </div>
+                    </div>
+                    
+                    <button class="action-btn premium" onclick="upgradeToPremium()">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l3.09 6.26L22 9l-5 4.87 1.18 6.88L12 17.77l-6.18 2.98L7 14.87 2 9l6.91-1.74z"/>
+                      </svg>
+                      Upgrade ke Premium
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Actions Section -->
+              <div class="quick-actions-section">
+                <h3>Aksi Cepat</h3>
+                <div class="actions-grid">
+                  <button class="action-card" onclick="window.app.exportUserData()">
+                    <div class="action-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17,8 12,3 7,8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                      </svg>
+                    </div>
+                    <span>Ekspor Data</span>
+                  </button>
+                  
+                  <button class="action-card" onclick="syncData()">
+                    <div class="action-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23,4 23,10 17,10"/>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                      </svg>
+                    </div>
+                    <span>Sinkronisasi</span>
+                  </button>
+                  
+                  <button class="action-card" onclick="contactSupport()">
+                    <div class="action-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                      </svg>
+                    </div>
+                    <span>Bantuan</span>
+                  </button>
+                  
+                  <button class="action-card danger" onclick="window.app.logout()">
+                    <div class="action-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16,17 21,12 16,7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                      </svg>
+                    </div>
+                    <span>Keluar</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </section>
+        </main>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+          <a href="dashboard.html" class="nav-tab"> 🏠<br />Dashboard </a>
+          <a href="add-transaction.html" class="nav-tab"> ➕<br />Tambah </a>
+          <a href="history.html" class="nav-tab"> 📋<br />Riwayat </a>
+          <a
+            href="analytics.html"
+            class="nav-tab premium-feature"
+            onclick="checkPremiumFeature('advancedReports')"
+          >
+            📊<br />Analisis
+            <span class="premium-badge">⭐</span>
+          </a>
+          <a href="profile.html" class="nav-tab active"> 👤<br />Profil </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+      // Global authentication functions
+      window.Auth = {
+        loginAsGuest: function () {
+          const guestData = {
+            isAuthenticated: true,
+            isGuest: true,
+            id: "guest",
+            name: "Pengguna Tamu",
+            email: "",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(guestData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+
+        loginWithGoogle: function () {
+          console.log("Google login clicked");
+          // Mock Google login for demo
+          const userData = {
+            isAuthenticated: true,
+            isGuest: false,
+            id: "google_123",
+            name: "Pengguna Google",
+            email: "user@gmail.com",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(userData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+      };
+
+      // Profile-specific functions
+      function editProfilePicture() {
+        window.showToast && window.showToast("Fitur edit foto profil akan segera hadir!", "info");
+      }
+
+      function editPersonalInfo() {
+        window.showToast && window.showToast("Fitur edit informasi pribadi akan segera hadir!", "info");
+      }
+
+      function changePassword() {
+        window.showToast && window.showToast("Fitur ubah kata sandi akan segera hadir!", "info");
+      }
+
+      function manage2FA() {
+        window.showToast && window.showToast("Fitur autentikasi dua faktor akan segera hadir!", "info");
+      }
+
+      function downloadData() {
+        if (window.app && window.app.exportUserData) {
+          window.app.exportUserData();
+        } else {
+          window.showToast && window.showToast("Fitur unduh data tidak tersedia!", "error");
+        }
+      }
+
+      function upgradeToPremium() {
+        window.showToast && window.showToast("Upgrade ke Premium akan segera hadir!", "info");
+      }
+
+      function syncData() {
+        window.showToast && window.showToast("Fitur sinkronisasi akan segera hadir!", "info");
+      }
+
+      function contactSupport() {
+        window.showToast && window.showToast("Hubungi support: support@pengeluaranqu.com", "info");
+      }
+
+      // Update profile data
+      function updateProfileData() {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        const transactions = JSON.parse(localStorage.getItem("transactions") || "[]");
+        
+        // Update profile info
+        document.getElementById("profileName").textContent = user.name || "Pengguna Tamu";
+        document.getElementById("fullName").textContent = user.name || "Pengguna Tamu";
+        document.getElementById("emailAddress").textContent = user.email || "-";
+        document.getElementById("userTypeBadge").textContent = user.isGuest ? "Tamu" : "Premium";
+        
+        // Calculate stats
+        const totalTransactions = transactions.length;
+        const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+        const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+        
+        // Update stats
+        document.getElementById("totalTransactions").textContent = totalTransactions.toLocaleString();
+        document.getElementById("totalIncome").textContent = window.Utils ? window.Utils.formatCurrency(totalIncome) : `Rp ${totalIncome.toLocaleString()}`;
+        document.getElementById("totalExpenses").textContent = window.Utils ? window.Utils.formatCurrency(totalExpenses) : `Rp ${totalExpenses.toLocaleString()}`;
+        
+        // Calculate days since joined (mock data for now)
+        const joinDate = new Date(user.joinDate || Date.now());
+        const daysSinceJoined = Math.floor((Date.now() - joinDate.getTime()) / (1000 * 60 * 60 * 24));
+        document.getElementById("daysSinceJoined").textContent = daysSinceJoined.toString();
+      }
+
+      // Initialize app for profile
+      document.addEventListener("DOMContentLoaded", function () {
+        // Ensure ExpenseTracker is loaded before using it
+        if (window.ExpenseTracker) {
+          window.app = window.ExpenseTracker;
+          window.app.init();
+          // Show only profile section
+          window.app.showSection("profile");
+          // Update profile data
+          setTimeout(updateProfileData, 100);
+        } else {
+          console.error(
+            "ExpenseTracker not found. Make sure app.js is loaded correctly."
+          );
+          setTimeout(() => {
+            if (window.ExpenseTracker) {
+              window.app = window.ExpenseTracker;
+              window.app.init();
+              window.app.showSection("profile");
+              updateProfileData();
+            }
+          }, 500); // Try again after a short delay
+        }
+      });
+    </script>
+  </body>
+</html>

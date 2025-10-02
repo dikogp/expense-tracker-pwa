@@ -1,0 +1,74 @@
+/* Welcome Tips Styles */
+
+.welcome-tips {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 90%;
+  max-width: 400px;
+  background-color: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  padding: 1.5rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+  color: var(--text-primary);
+}
+
+.welcome-tips.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.tips-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tips-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.tips-content ul {
+  padding-left: 1.25rem;
+  margin: 1rem 0;
+}
+
+.tips-content ul li {
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.tips-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Provider specific styles */
+.tips-header.google h3 {
+  color: #4285F4;
+}
+
+.tips-header.guest h3 {
+  color: #FF9800;
+}

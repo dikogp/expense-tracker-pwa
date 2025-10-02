@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analisis Keuangan - Pengeluaranqu</title>
+    <meta name="description" content="Analisis dan laporan keuangan" />
+
+    <!-- Content Security Policy -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;"
+    />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pengeluaranqu" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.svg" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <div id="app">
+      <!-- Authentication Screen -->
+      <div id="authScreen" class="auth-screen">
+        <div class="auth-container">
+          <div class="auth-header">
+            <div class="logo-large">
+              <i class="icon-wallet"></i>
+              <h1>Pengeluaranqu</h1>
+              <p>Kelola keuangan harian dengan mudah</p>
+            </div>
+          </div>
+          <div id="loginForm" class="auth-form active">
+            <h2>Masuk ke Akun Anda</h2>
+            <form id="loginFormElement">
+              <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input
+                  type="email"
+                  id="loginEmail"
+                  name="email"
+                  required
+                  placeholder="nama@email.com"
+                />
+              </div>
+              <div class="form-group">
+                <label for="loginPassword">Kata Sandi</label>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  name="password"
+                  required
+                  placeholder="Masukkan kata sandi"
+                />
+              </div>
+              <button type="submit" class="btn-primary">Masuk</button>
+            </form>
+            <div class="auth-divider"><span>atau</span></div>
+            <button class="btn-guest" onclick="Auth.loginAsGuest()">
+              Masuk sebagai Tamu
+            </button>
+            <button class="btn-google" onclick="Auth.loginWithGoogle()">
+              Masuk dengan Google
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Application -->
+      <div id="mainApp" class="main-app">
+        <!-- Header -->
+        <header class="header">
+          <div class="container">
+            <div
+              class="logo clickable-logo"
+              onclick="window.location.href = 'dashboard.html'"
+            >
+              <span class="logo-icon">💰</span>
+              <h1>Pengeluaranqu</h1>
+            </div>
+            <div class="header-info">
+              <div class="user-greeting">
+                <span class="greeting-text" id="greetingText"
+                  >Selamat datang,</span
+                >
+                <span class="user-name" id="headerUserName">Pengguna</span>
+              </div>
+              <!-- Hamburger Menu Button -->
+              <button
+                class="hamburger-menu"
+                onclick="toggleHamburgerMenu()"
+                id="hamburgerBtn"
+              >
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Hamburger Menu Dropdown -->
+          <div class="hamburger-dropdown" id="hamburgerDropdown">
+            <div class="hamburger-menu-content">
+              <a href="dashboard.html" class="hamburger-menu-item">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Dashboard</span>
+              </a>
+              <a href="add-transaction.html" class="hamburger-menu-item">
+                <span class="menu-icon">➕</span>
+                <span class="menu-text">Tambah Transaksi</span>
+              </a>
+              <a href="history.html" class="hamburger-menu-item">
+                <span class="menu-icon">📋</span>
+                <span class="menu-text">Riwayat</span>
+              </a>
+              <a
+                href="analytics.html"
+                class="hamburger-menu-item premium-item active"
+                onclick="checkPremiumFeature('advancedReports')"
+              >
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Analisis</span>
+                <span class="premium-badge">⭐</span>
+              </a>
+              <a href="profile.html" class="hamburger-menu-item">
+                <span class="menu-icon">👤</span>
+                <span class="menu-text">Profil</span>
+              </a>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <!-- Analytics Content -->
+          <section id="analytics" class="tab-content active">
+            <div class="container">
+              <!-- Modern Header Section -->
+              <div class="page-header-modern">
+                <div class="header-content">
+                  <div class="header-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="20" x2="12" y2="10" />
+                      <line x1="18" y1="20" x2="18" y2="4" />
+                      <line x1="6" y1="20" x2="6" y2="16" />
+                    </svg>
+                  </div>
+                  <div class="header-text">
+                    <h1>Financial Analytics</h1>
+                    <p>Gain insights into your spending patterns</p>
+                  </div>
+                </div>
+                <!-- Quick Action -->
+                <div class="header-action">
+                  <button class="btn-export" id="exportReport">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7,10 12,15 17,10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Export
+                  </button>
+                </div>
+              </div>
+
+              <!-- Analytics Control Panel -->
+              <div class="analytics-controls glass-card">
+                <div class="controls-header">
+                  <h3 class="section-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="3" />
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                    Analysis Settings
+                  </h3>
+                </div>
+                
+                <div class="controls-grid">
+                  <!-- Time Period Selection -->
+                  <div class="control-group-modern">
+                    <label class="control-label">Time Period</label>
+                    <div class="period-chips">
+                      <button class="period-chip" data-period="week">
+                        <span class="chip-icon">📅</span>
+                        This Week
+                      </button>
+                      <button class="period-chip active" data-period="month">
+                        <span class="chip-icon">📅</span>
+                        This Month
+                      </button>
+                      <button class="period-chip" data-period="quarter">
+                        <span class="chip-icon">📅</span>
+                        Quarter
+                      </button>
+                      <button class="period-chip" data-period="year">
+                        <span class="chip-icon">📅</span>
+                        This Year
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Chart Type Selection -->
+                  <div class="control-group-modern">
+                    <label class="control-label">Analysis Type</label>
+                    <div class="select-wrapper-modern">
+                      <select id="chartType" class="select-modern">
+                        <option value="overview">📊 Overview Dashboard</option>
+                        <option value="category">� Category Breakdown</option>
+                        <option value="trend">📈 Spending Trends</option>
+                        <option value="comparison">⚖️ Income vs Expense</option>
+                        <option value="budget">🎯 Budget Analysis</option>
+                      </select>
+                      <div class="select-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="6,9 12,15 18,9" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Key Metrics Dashboard -->
+              <div class="metrics-dashboard glass-card">
+                <h3 class="section-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22,12 18,12 15,21 9,3 6,12 2,12" />
+                  </svg>
+                  Key Performance Indicators
+                </h3>
+                
+                <div class="kpi-grid">
+                  <div class="kpi-card balance">
+                    <div class="kpi-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                      </svg>
+                    </div>
+                    <div class="kpi-content">
+                      <h4 class="kpi-title">Current Balance</h4>
+                      <div class="kpi-value" id="statBalance">Rp 0</div>
+                      <div class="kpi-change positive">+15.2%</div>
+                    </div>
+                  </div>
+
+                  <div class="kpi-card income">
+                    <div class="kpi-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22,12 18,8 14,12" />
+                        <path d="M18 8v13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8" />
+                      </svg>
+                    </div>
+                    <div class="kpi-content">
+                      <h4 class="kpi-title">Monthly Income</h4>
+                      <div class="kpi-value" id="statMonthly">Rp 0</div>
+                      <div class="kpi-change positive">+8.7%</div>
+                    </div>
+                  </div>
+
+                  <div class="kpi-card budget">
+                    <div class="kpi-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M16 16l-4-4V6" />
+                      </svg>
+                    </div>
+                    <div class="kpi-content">
+                      <h4 class="kpi-title">Budget Usage</h4>
+                      <div class="kpi-value" id="statBudget">Rp 0</div>
+                      <div class="kpi-change neutral">67.5%</div>
+                    </div>
+                  </div>
+
+                  <div class="kpi-card savings">
+                    <div class="kpi-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7z" />
+                      </svg>
+                    </div>
+                    <div class="kpi-content">
+                      <h4 class="kpi-title">Savings Rate</h4>
+                      <div class="kpi-value" id="statSavings">25.3%</div>
+                      <div class="kpi-change positive">+2.1%</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Analytics Content Area -->
+              <div class="analytics-main-content">
+                <div id="analyticsContent" class="analytics-content-modern">
+                  <!-- Chart Container -->
+                  <div class="chart-container glass-card">
+                    <div class="chart-header">
+                      <h3 class="section-title" id="chartTitle">Spending Overview</h3>
+                      <div class="chart-actions">
+                        <button class="chart-action-btn" id="fullscreenChart">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                          </svg>
+                        </button>
+                        <button class="chart-action-btn" id="downloadChart">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-15" />
+                            <polyline points="7,10 12,15 17,10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div class="chart-area" id="mainChart">
+                      <!-- Chart will be rendered here -->
+                      <div class="chart-placeholder">
+                        <div class="placeholder-icon">
+                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <line x1="12" y1="20" x2="12" y2="10" />
+                            <line x1="18" y1="20" x2="18" y2="4" />
+                            <line x1="6" y1="20" x2="6" y2="16" />
+                          </svg>
+                        </div>
+                        <p class="placeholder-text">Select analysis type to view chart</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Insights Panel -->
+                  <div class="insights-panel glass-card">
+                    <h3 class="section-title">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 11H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h4m6-6h4a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-4m-6 0v-7.5a3.5 3.5 0 1 1 7 0V18" />
+                      </svg>
+                      Smart Insights
+                    </h3>
+                    
+                    <div class="insights-list" id="insightsList">
+                      <!-- Insights will be populated here -->
+                      <div class="insight-item">
+                        <div class="insight-icon success">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20,6 9,17 4,12" />
+                          </svg>
+                        </div>
+                        <div class="insight-content">
+                          <p><strong>Great spending control!</strong> You're 15% under budget this month.</p>
+                        </div>
+                      </div>
+
+                      <div class="insight-item">
+                        <div class="insight-icon warning">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                            <line x1="12" y1="9" x2="12" y2="13" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" />
+                          </svg>
+                        </div>
+                        <div class="insight-content">
+                          <p><strong>Food expenses increased</strong> by 23% compared to last month.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Premium Teaser (if not premium user) -->
+                  <div class="premium-teaser glass-card" id="premiumTeaser">
+                    <div class="teaser-content">
+                      <div class="teaser-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                        </svg>
+                      </div>
+                      <h3>Unlock Advanced Analytics</h3>
+                      <p>Get detailed insights, forecasting, and advanced reporting with our Premium plan.</p>
+                      <div class="premium-features">
+                        <div class="feature-item">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20,6 9,17 4,12" />
+                          </svg>
+                          Advanced charts and visualizations
+                        </div>
+                        <div class="feature-item">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20,6 9,17 4,12" />
+                          </svg>
+                          Spending predictions and forecasts
+                        </div>
+                        <div class="feature-item">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20,6 9,17 4,12" />
+                          </svg>
+                          Export detailed reports
+                        </div>
+                      </div>
+                      <button class="btn-premium-upgrade">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                        </svg>
+                        Upgrade to Premium
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <!-- Bottom navigation removed - using hamburger menu only for consistency -->
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+      // Global authentication functions
+      window.Auth = {
+        loginAsGuest: function () {
+          const guestData = {
+            isAuthenticated: true,
+            isGuest: true,
+            id: "guest",
+            name: "Pengguna Tamu",
+            email: "",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(guestData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+
+        loginWithGoogle: function () {
+          console.log("Google login clicked");
+          // Mock Google login for demo
+          const userData = {
+            isAuthenticated: true,
+            isGuest: false,
+            id: "google_123",
+            name: "Pengguna Google",
+            email: "user@gmail.com",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(userData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+      };
+
+      // Hamburger Menu Functions
+      function toggleHamburgerMenu() {
+        const dropdown = document.getElementById("hamburgerDropdown");
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+
+        if (dropdown.classList.contains("active")) {
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        } else {
+          dropdown.classList.add("active");
+          hamburgerBtn.classList.add("active");
+        }
+      }
+
+      // Close hamburger menu when clicking outside
+      document.addEventListener("click", function (event) {
+        const dropdown = document.getElementById("hamburgerDropdown");
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+
+        if (
+          !hamburgerBtn.contains(event.target) &&
+          !dropdown.contains(event.target)
+        ) {
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        }
+      });
+
+      // Close hamburger menu when clicking menu items
+      document.addEventListener("click", function (event) {
+        if (event.target.closest(".hamburger-menu-item")) {
+          const dropdown = document.getElementById("hamburgerDropdown");
+          const hamburgerBtn = document.getElementById("hamburgerBtn");
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        }
+      });
+
+      // Premium feature check function
+      function checkPremiumFeature(feature) {
+        if (window.app && window.app.showToast) {
+          window.app.showToast("Fitur Premium - Coming Soon!", "info");
+        } else {
+          console.log("Premium feature:", feature);
+        }
+        return false;
+      }
+
+      // Initialize app for analytics
+      document.addEventListener("DOMContentLoaded", function () {
+        // Ensure ExpenseTracker is loaded before using it
+        if (window.ExpenseTracker) {
+          window.app = window.ExpenseTracker;
+          window.app.init();
+          // Show only analytics section
+          window.app.showSection("analytics");
+        } else {
+          console.error(
+            "ExpenseTracker not found. Make sure app.js is loaded correctly."
+          );
+          setTimeout(() => {
+            if (window.ExpenseTracker) {
+              window.app = window.ExpenseTracker;
+              window.app.init();
+              window.app.showSection("analytics");
+            }
+          }, 500); // Try again after a short delay
+        }
+      });
+    </script>
+  </body>
+</html>

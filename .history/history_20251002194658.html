@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Riwayat Transaksi - Pengeluaranqu</title>
+    <meta name="description" content="Riwayat dan history transaksi keuangan" />
+
+    <!-- Content Security Policy -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;"
+    />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pengeluaranqu" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.svg" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <div id="app">
+      <!-- Authentication Screen -->
+      <div id="authScreen" class="auth-screen">
+        <div class="auth-container">
+          <div class="auth-header">
+            <div class="logo-large">
+              <i class="icon-wallet"></i>
+              <h1>Pengeluaranqu</h1>
+              <p>Kelola keuangan harian dengan mudah</p>
+            </div>
+          </div>
+          <div id="loginForm" class="auth-form active">
+            <h2>Masuk ke Akun Anda</h2>
+            <form id="loginFormElement">
+              <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input
+                  type="email"
+                  id="loginEmail"
+                  name="email"
+                  required
+                  placeholder="nama@email.com"
+                />
+              </div>
+              <div class="form-group">
+                <label for="loginPassword">Kata Sandi</label>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  name="password"
+                  required
+                  placeholder="Masukkan kata sandi"
+                />
+              </div>
+              <button type="submit" class="btn-primary">Masuk</button>
+            </form>
+            <div class="auth-divider"><span>atau</span></div>
+            <button class="btn-guest" onclick="Auth.loginAsGuest()">
+              Masuk sebagai Tamu
+            </button>
+            <button class="btn-google" onclick="Auth.loginWithGoogle()">
+              Masuk dengan Google
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Application -->
+      <div id="mainApp" class="main-app">
+        <!-- Header -->
+        <header class="header">
+          <div class="container">
+            <div
+              class="logo clickable-logo"
+              onclick="window.location.href = 'dashboard.html'"
+            >
+              <span class="logo-icon">💰</span>
+              <h1>Pengeluaranqu</h1>
+            </div>
+            <div class="header-info">
+              <div class="user-greeting">
+                <span class="greeting-text" id="greetingText"
+                  >Selamat datang,</span
+                >
+                <span class="user-name" id="headerUserName">Pengguna</span>
+              </div>
+              <!-- Hamburger Menu Button -->
+              <button
+                class="hamburger-menu"
+                onclick="toggleHamburgerMenu()"
+                id="hamburgerBtn"
+              >
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Hamburger Menu Dropdown -->
+          <div class="hamburger-dropdown" id="hamburgerDropdown">
+            <div class="hamburger-menu-content">
+              <a href="dashboard.html" class="hamburger-menu-item">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Dashboard</span>
+              </a>
+              <a href="add-transaction.html" class="hamburger-menu-item">
+                <span class="menu-icon">➕</span>
+                <span class="menu-text">Tambah Transaksi</span>
+              </a>
+              <a href="history.html" class="hamburger-menu-item active">
+                <span class="menu-icon">📋</span>
+                <span class="menu-text">Riwayat</span>
+              </a>
+              <a
+                href="analytics.html"
+                class="hamburger-menu-item premium-item"
+                onclick="checkPremiumFeature('advancedReports')"
+              >
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Analisis</span>
+                <span class="premium-badge">⭐</span>
+              </a>
+              <a href="profile.html" class="hamburger-menu-item">
+                <span class="menu-icon">👤</span>
+                <span class="menu-text">Profil</span>
+              </a>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <!-- History Content -->
+          <section id="history" class="tab-content active">
+            <div class="container">
+              <!-- Modern Header Section -->
+              <div class="page-header-modern">
+                <div class="header-content">
+                  <div class="header-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 3h18v18H3zM9 9h6v6H9z" />
+                    </svg>
+                  </div>
+                  <div class="header-text">
+                    <h1>Transaction History</h1>
+                    <p>View and manage all your transactions</p>
+                  </div>
+                </div>
+                <!-- Summary Stats -->
+                <div class="header-stats">
+                  <div class="stat-mini">
+                    <span class="stat-value" id="totalTransactions">0</span>
+                    <span class="stat-label">Total</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="stat-value" id="monthTransactions">0</span>
+                    <span class="stat-label">This Month</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Enhanced Summary Dashboard -->
+              <div class="history-summary-modern glass-card">
+                <h3 class="section-title">Financial Overview</h3>
+                <div class="summary-grid-modern">
+                  <div class="summary-card-modern income-card">
+                    <div class="summary-icon income">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22,12 18,8 14,12" />
+                        <path d="M18 8v13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8" />
+                      </svg>
+                    </div>
+                    <div class="summary-content">
+                      <span class="summary-label">Total Income</span>
+                      <span class="summary-amount income" id="totalIncomeFiltered">Rp 0</span>
+                      <span class="summary-change positive">+12.5%</span>
+                    </div>
+                  </div>
+
+                  <div class="summary-card-modern expense-card">
+                    <div class="summary-icon expense">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22,12 18,16 14,12" />
+                        <path d="M18 16V3a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v13" />
+                      </svg>
+                    </div>
+                    <div class="summary-content">
+                      <span class="summary-label">Total Expenses</span>
+                      <span class="summary-amount expense" id="totalExpenseFiltered">Rp 0</span>
+                      <span class="summary-change negative">-8.3%</span>
+                    </div>
+                  </div>
+
+                  <div class="summary-card-modern balance-card">
+                    <div class="summary-icon balance">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                      </svg>
+                    </div>
+                    <div class="summary-content">
+                      <span class="summary-label">Net Balance</span>
+                      <span class="summary-amount balance" id="netAmountFiltered">Rp 0</span>
+                      <span class="summary-change positive">+4.2%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Advanced Filter Panel -->
+              <div class="filter-panel-modern glass-card">
+                <div class="filter-header">
+                  <h3 class="section-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46 22,3" />
+                    </svg>
+                    Filters & Search
+                  </h3>
+                  <button class="filter-toggle" id="toggleFilters">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6,9 12,15 18,9" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <div class="filter-content" id="filterContent">
+                  <!-- Search Bar -->
+                  <div class="search-section">
+                    <div class="search-wrapper-modern">
+                      <div class="search-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="11" cy="11" r="8" />
+                          <path d="M21 21l-4.35-4.35" />
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        id="searchTransaction"
+                        placeholder="Search transactions, categories, amounts..."
+                        class="search-input-modern"
+                      />
+                      <button class="search-clear" id="clearSearch">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Filter Options Grid -->
+                  <div class="filters-grid">
+                    <div class="filter-group-modern">
+                      <label class="filter-label">Month</label>
+                      <div class="select-wrapper-modern">
+                        <select id="filterMonth" class="select-modern">
+                          <option value="">All Months</option>
+                        </select>
+                        <div class="select-icon">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6,9 12,15 18,9" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="filter-group-modern">
+                      <label class="filter-label">Transaction Type</label>
+                      <div class="filter-chips">
+                        <button class="filter-chip active" data-filter="type" data-value="">
+                          All Types
+                        </button>
+                        <button class="filter-chip" data-filter="type" data-value="income">
+                          <span class="chip-icon income">📈</span>
+                          Income
+                        </button>
+                        <button class="filter-chip" data-filter="type" data-value="expense">
+                          <span class="chip-icon expense">📉</span>
+                          Expense
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="filter-group-modern">
+                      <label class="filter-label">Category</label>
+                      <div class="select-wrapper-modern">
+                        <select id="filterCategory" class="select-modern">
+                          <option value="">All Categories</option>
+                        </select>
+                        <div class="select-icon">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6,9 12,15 18,9" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Filter Actions -->
+                  <div class="filter-actions">
+                    <button class="btn-clear-filters" id="clearFilters">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3,6 5,6 21,6" />
+                        <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2" />
+                      </svg>
+                      Clear All
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sort & View Options -->
+              <div class="view-controls glass-card">
+                <div class="sort-section">
+                  <label class="control-label">Sort by:</label>
+                  <div class="sort-options">
+                    <button class="sort-btn active" data-sort="date" data-order="desc">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M3 12h18M3 18h18" />
+                      </svg>
+                      Recent First
+                    </button>
+                    <button class="sort-btn" data-sort="amount" data-order="desc">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                      </svg>
+                      Amount High
+                    </button>
+                    <button class="sort-btn" data-sort="category" data-order="asc">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                      </svg>
+                      Category
+                    </button>
+                  </div>
+                </div>
+
+                <div class="view-section">
+                  <label class="control-label">View:</label>
+                  <div class="view-toggle">
+                    <button class="view-btn active" data-view="list">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6" />
+                        <line x1="8" y1="12" x2="21" y2="12" />
+                        <line x1="8" y1="18" x2="21" y2="18" />
+                        <line x1="3" y1="6" x2="3.01" y2="6" />
+                        <line x1="3" y1="12" x2="3.01" y2="12" />
+                        <line x1="3" y1="18" x2="3.01" y2="18" />
+                      </svg>
+                    </button>
+                    <button class="view-btn" data-view="grid">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" />
+                        <rect x="14" y="3" width="7" height="7" />
+                        <rect x="14" y="14" width="7" height="7" />
+                        <rect x="3" y="14" width="7" height="7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Enhanced Budget Status -->
+              <div class="budget-status-modern glass-card">
+                <h3 class="section-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M16 16l-4-4V6" />
+                  </svg>
+                  Monthly Budget Status
+                </h3>
+                <div class="budget-status">
+                  <!-- Content filled by updateBudgetStatus() -->
+                </div>
+              </div>
+
+              <!-- Transactions List Container -->
+              <div class="transactions-container">
+                <div id="transactionList" class="transaction-list-modern">
+                  <!-- Loading State -->
+                  <div class="loading-state" id="loadingState">
+                    <div class="loading-spinner"></div>
+                    <p>Loading transactions...</p>
+                  </div>
+
+                  <!-- Empty State -->
+                  <div class="empty-state-modern" id="emptyState">
+                    <div class="empty-icon">
+                      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                      </svg>
+                    </div>
+                    <h3>No transactions found</h3>
+                    <p>Start adding transactions to see them here</p>
+                    <button class="btn-primary-modern" onclick="window.location.href='add-transaction.html'">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                      Add Transaction
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Load More Button -->
+                <div class="load-more-section" id="loadMoreSection">
+                  <button class="btn-load-more" id="loadMoreBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6,9 12,15 18,9" />
+                    </svg>
+                    Load More Transactions
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <!-- Bottom navigation removed - using hamburger menu only for consistency -->
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>✏️ Edit Transaksi</h3>
+          <button class="modal-close" onclick="closeModal('editModal')">
+            &times;
+          </button>
+        </div>
+        <form id="editForm" class="modal-form">
+          <input type="hidden" id="editId" name="id" />
+          <input type="hidden" id="editType" name="type" />
+
+          <div class="form-group">
+            <label for="editAmount">💰 Jumlah</label>
+            <div class="amount-input">
+              <span class="currency">Rp</span>
+              <input
+                type="text"
+                inputmode="numeric"
+                id="editAmount"
+                name="amount"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editCategory">📂 Kategori</label>
+            <select id="editCategory" name="category" required>
+              <!-- Categories populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="editDescription">📝 Deskripsi</label>
+            <input type="text" id="editDescription" name="description" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editDate">📅 Tanggal</label>
+              <input type="date" id="editDate" name="date" required />
+            </div>
+            <div class="form-group">
+              <label for="editTime">🕐 Waktu</label>
+              <input type="time" id="editTime" name="time" required />
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="closeModal('editModal')"
+            >
+              ❌ Batal
+            </button>
+            <button type="submit" class="btn-primary">💾 Simpan</button>
+            <button type="button" class="btn-danger" id="deleteBtn">
+              🗑️ Hapus
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+      // Global authentication functions
+      window.Auth = {
+        loginAsGuest: function () {
+          const guestData = {
+            isAuthenticated: true,
+            isGuest: true,
+            id: "guest",
+            name: "Pengguna Tamu",
+            email: "",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(guestData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+
+        loginWithGoogle: function () {
+          console.log("Google login clicked");
+          // Mock Google login for demo
+          const userData = {
+            isAuthenticated: true,
+            isGuest: false,
+            id: "google_123",
+            name: "Pengguna Google",
+            email: "user@gmail.com",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(userData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+      };
+
+      // Hamburger Menu Functions
+      function toggleHamburgerMenu() {
+        const dropdown = document.getElementById("hamburgerDropdown");
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+
+        if (dropdown.classList.contains("active")) {
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        } else {
+          dropdown.classList.add("active");
+          hamburgerBtn.classList.add("active");
+        }
+      }
+
+      // Close hamburger menu when clicking outside
+      document.addEventListener("click", function (event) {
+        const dropdown = document.getElementById("hamburgerDropdown");
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+
+        if (
+          !hamburgerBtn.contains(event.target) &&
+          !dropdown.contains(event.target)
+        ) {
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        }
+      });
+
+      // Close hamburger menu when clicking menu items
+      document.addEventListener("click", function (event) {
+        if (event.target.closest(".hamburger-menu-item")) {
+          const dropdown = document.getElementById("hamburgerDropdown");
+          const hamburgerBtn = document.getElementById("hamburgerBtn");
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        }
+      });
+
+      // Premium feature check function
+      function checkPremiumFeature(feature) {
+        if (window.app && window.app.showToast) {
+          window.app.showToast("Fitur Premium - Coming Soon!", "info");
+        } else {
+          console.log("Premium feature:", feature);
+        }
+        return false;
+      }
+
+      // Initialize app for history
+      document.addEventListener("DOMContentLoaded", function () {
+        // Ensure ExpenseTracker is loaded before using it
+        if (window.ExpenseTracker) {
+          window.app = window.ExpenseTracker;
+          window.app.init();
+          // Show only history section
+          window.app.showSection("history");
+        } else {
+          console.error(
+            "ExpenseTracker not found. Make sure app.js is loaded correctly."
+          );
+          setTimeout(() => {
+            if (window.ExpenseTracker) {
+              window.app = window.ExpenseTracker;
+              window.app.init();
+              window.app.showSection("history");
+            }
+          }, 500); // Try again after a short delay
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Pengeluaranqu</title>
+    <meta
+      name="description"
+      content="Dashboard keuangan pribadi untuk melacak pengeluaran dan pemasukan"
+    />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pengeluaranqu" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.svg" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Content Security Policy -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self';"
+    />
+  </head>
+  <body>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <div id="app">
+      <!-- Main Application -->
+      <div id="mainApp" class="main-app">
+        <!-- Header -->
+        <header class="header">
+          <div class="container">
+            <div
+              class="logo clickable-logo"
+              onclick="window.app.showSection('dashboard')"
+            >
+              <span class="logo-icon">💰</span>
+              <h1>Pengeluaranqu</h1>
+            </div>
+            <div class="header-info">
+              <div class="user-greeting">
+                <span class="greeting-text" id="greetingText"
+                  >Selamat datang,</span
+                >
+                <span class="user-name" id="headerUserName">Pengguna</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <!-- Dashboard Content -->
+          <section id="dashboard" class="tab-content active">
+            <div class="container">
+              <!-- Dashboard Header with Quick Actions -->
+              <div class="dashboard-header">
+                <div class="header-content">
+                  <div class="header-text">
+                    <h1 class="dashboard-title">Financial Overview</h1>
+                    <p class="dashboard-subtitle" id="dashboardDate">
+                      2 Oktober 2025
+                    </p>
+                  </div>
+                  <div class="header-actions">
+                    <button
+                      class="action-button secondary"
+                      onclick="refreshDashboard()"
+                    >
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <polyline points="23,4 23,10 17,10" />
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                      </svg>
+                      Refresh
+                    </button>
+                    <button
+                      class="action-button primary"
+                      data-type="expense"
+                      data-action="quick-add"
+                    >
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                      Add Transaction
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Key Metrics Cards -->
+              <div class="metrics-grid">
+                <div class="metric-card balance-card">
+                  <div class="metric-icon">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <line x1="12" y1="1" x2="12" y2="23" />
+                      <path
+                        d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                      />
+                    </svg>
+                  </div>
+                  <div class="metric-content">
+                    <h3 class="metric-label">Current Balance</h3>
+                    <p class="metric-value primary" id="dashboardBalance">
+                      Rp 0
+                    </p>
+                    <span class="metric-change positive" id="balanceChange"
+                      >+0%</span
+                    >
+                  </div>
+                </div>
+
+                <div class="metric-card income-card">
+                  <div class="metric-icon success">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="22,12 18,8 14,12" />
+                      <path d="M18 8v13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8" />
+                    </svg>
+                  </div>
+                  <div class="metric-content">
+                    <h3 class="metric-label">Monthly Income</h3>
+                    <p class="metric-value success" id="monthIncome">Rp 0</p>
+                    <span class="metric-change positive" id="incomeChange"
+                      >+0%</span
+                    >
+                  </div>
+                </div>
+
+                <div class="metric-card expense-card">
+                  <div class="metric-icon danger">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="2,12 6,8 10,12" />
+                      <path d="M6 8v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8" />
+                    </svg>
+                  </div>
+                  <div class="metric-content">
+                    <h3 class="metric-label">Monthly Expenses</h3>
+                    <p class="metric-value danger" id="monthExpense">Rp 0</p>
+                    <span class="metric-change negative" id="expenseChange"
+                      >+0%</span
+                    >
+                  </div>
+                </div>
+
+                <div class="metric-card savings-card">
+                  <div class="metric-icon warning">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M12 2l3.09 6.26L22 9l-5 4.87 1.18 6.88L12 17.77l-6.18 2.98L7 14.87 2 9l6.91-1.74z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="metric-content">
+                    <h3 class="metric-label">Savings Rate</h3>
+                    <p class="metric-value warning" id="savingsRate">0%</p>
+                    <span class="metric-change neutral" id="savingsChange"
+                      >Goal: 20%</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Dashboard Grid -->
+              <div class="dashboard-grid">
+                <!-- Charts Section -->
+                <div class="dashboard-section chart-section">
+                  <div class="section-header">
+                    <h2 class="section-title">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <polyline points="22,12 18,12 15,21 9,3 6,12 2,12" />
+                      </svg>
+                      Financial Analytics
+                    </h2>
+                    <div class="section-actions">
+                      <select class="period-selector" id="chartPeriod">
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d" selected>Last 30 Days</option>
+                        <option value="90d">Last 3 Months</option>
+                        <option value="1y">Last Year</option>
+                      </select>
+                      <a href="analytics.html" class="link-button">
+                        View Details
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path d="M7 17l10-10M17 7H7v10" />
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="charts-container">
+                    <div class="chart-wrapper">
+                      <h4 class="chart-title">Income vs Expenses Trend</h4>
+                      <div class="chart-placeholder" id="trendChart">
+                        <canvas
+                          id="trendChartCanvas"
+                          width="400"
+                          height="200"
+                        ></canvas>
+                      </div>
+                    </div>
+
+                    <div class="chart-wrapper">
+                      <h4 class="chart-title">Expense Categories</h4>
+                      <div class="chart-placeholder" id="categoryChart">
+                        <canvas
+                          id="categoryChartCanvas"
+                          width="300"
+                          height="200"
+                        ></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <div class="dashboard-section activity-section">
+                  <div class="section-header">
+                    <h2 class="section-title">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12,6 12,12 16,14" />
+                      </svg>
+                      Recent Activity
+                    </h2>
+                    <a href="history.html" class="link-button">
+                      View All
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M7 17l10-10M17 7H7v10" />
+                      </svg>
+                    </a>
+                  </div>
+
+                  <div class="activity-list" id="recentActivity">
+                    <!-- Will be populated by JavaScript -->
+                  </div>
+                </div>
+
+                <!-- Budget Overview Section -->
+                <div class="dashboard-section budget-section">
+                  <div class="section-header">
+                    <h2 class="section-title">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M16 8L8 16m0-8l8 8" />
+                      </svg>
+                      Budget Overview
+                    </h2>
+                    <button class="link-button" onclick="showBudgetModal()">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                      Set Budget
+                    </button>
+                  </div>
+
+                  <div class="budget-content" id="budgetOverview">
+                    <!-- Will be populated by JavaScript -->
+                  </div>
+                </div>
+
+                <!-- Quick Insights Section -->
+                <div class="dashboard-section insights-section">
+                  <div class="section-header">
+                    <h2 class="section-title">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          d="M9 11H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h4m6-6h4a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-4m-6 0a2 2 0 0 0-2-2v-3a2 2 0 0 0 2-2m6 0a2 2 0 0 1 2-2v-3a2 2 0 0 1-2-2"
+                        />
+                      </svg>
+                      Smart Insights
+                    </h2>
+                    <button class="link-button" onclick="generateInsights()">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <polyline points="23,4 23,10 17,10" />
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                      </svg>
+                      Refresh
+                    </button>
+                  </div>
+
+                  <div class="insights-content" id="smartInsights">
+                    <!-- Will be populated by JavaScript -->
+                  </div>
+                </div>
+
+                <!-- Profile Integration Section -->
+                <div class="dashboard-section profile-section">
+                  <div class="section-header">
+                    <h2 class="section-title">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      Profile Summary
+                    </h2>
+                    <a href="profile.html" class="link-button">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M7 17l10-10M17 7H7v10" />
+                      </svg>
+                      View Profile
+                    </a>
+                  </div>
+
+                  <div class="profile-preview" id="profilePreview">
+                    <!-- Will be populated by JavaScript -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <!-- Floating Refresh Button -->
+        <button
+          class="dashboard-refresh-btn"
+          onclick="refreshDashboard()"
+          title="Refresh Dashboard"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M23 4v6h-6M1 20v-6h6" />
+            <path
+              d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M3.51 15a9 9 0 0 0 14.85 3.36L23 14"
+            />
+          </svg>
+        </button>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+          <a href="dashboard.html" class="nav-tab active">
+            🏠<br />Dashboard
+          </a>
+          <a href="add-transaction.html" class="nav-tab"> ➕<br />Tambah </a>
+          <a href="history.html" class="nav-tab"> 📋<br />Riwayat </a>
+          <a
+            href="analytics.html"
+            class="nav-tab premium-feature"
+            onclick="checkPremiumFeature('advancedReports')"
+          >
+            📊<br />Analisis
+            <span class="premium-badge">⭐</span>
+          </a>
+          <a href="profile.html" class="nav-tab"> 👤<br />Profil </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Modals and other shared content -->
+    <div class="modals-container">
+      <!-- Budget Modal -->
+      <div id="budgetModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Atur Anggaran Bulanan</h2>
+            <span class="close-modal" onclick="window.closeModal('budgetModal')"
+              >&times;</span
+            >
+          </div>
+          <div class="modal-body">
+            <form id="budgetForm">
+              <div class="form-group">
+                <label for="budget-month">Bulan</label>
+                <input type="month" id="budget-month" name="month" required />
+              </div>
+              <div class="form-group">
+                <label for="budget-amount">Jumlah Anggaran</label>
+                <input
+                  type="text"
+                  inputmode="numeric"
+                  id="budget-amount"
+                  name="budget"
+                  placeholder="Contoh: 5000000"
+                  required
+                />
+              </div>
+              <div class="form-actions">
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  onclick="window.closeModal('budgetModal')"
+                >
+                  Batal
+                </button>
+                <button type="submit" class="btn-primary">Simpan</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Add Modal -->
+      <div id="quickAddModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="quickAddTitle">Tambah Transaksi Cepat</h2>
+            <span
+              class="close-modal"
+              onclick="window.closeModal('quickAddModal')"
+              >&times;</span
+            >
+          </div>
+          <div class="modal-body">
+            <form id="quickAddForm" novalidate>
+              <input
+                type="hidden"
+                id="quickAddType"
+                name="type"
+                value="expense"
+              />
+              <div class="form-group">
+                <label for="quickAddAmount">Jumlah</label>
+                <input
+                  type="text"
+                  inputmode="numeric"
+                  id="quickAddAmount"
+                  name="amount"
+                  placeholder="Contoh: 50000"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="quickAddCategory">Kategori</label>
+                <select id="quickAddCategory" name="category" required></select>
+              </div>
+              <div class="form-group">
+                <label for="quickAddDescription">Deskripsi (Opsional)</label>
+                <input
+                  type="text"
+                  id="quickAddDescription"
+                  name="description"
+                  placeholder="Makan siang"
+                />
+              </div>
+              <div class="form-actions">
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  onclick="window.closeModal('quickAddModal')"
+                >
+                  Batal
+                </button>
+                <button type="submit" class="btn-primary">Simpan</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- Modals will be loaded here -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+      // Initialize app for dashboard
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set up service worker
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", function () {
+            navigator.serviceWorker
+              .register("sw.js")
+              .then(function (registration) {
+                console.log("SW registered with scope: ", registration.scope);
+              })
+              .catch(function (err) {
+                console.log("SW registration failed: ", err);
+              });
+          });
+        }
+
+        // Ensure ExpenseTracker is loaded before using it
+        if (window.ExpenseTracker) {
+          window.app = window.ExpenseTracker;
+          window.app.init();
+          // Show only dashboard section
+          window.app.showSection("dashboard");
+        } else {
+          console.error(
+            "ExpenseTracker not found. Make sure app.js is loaded correctly."
+          );
+          setTimeout(() => {
+            if (window.ExpenseTracker) {
+              window.app = window.ExpenseTracker;
+              window.app.init();
+              window.app.showSection("dashboard");
+            }
+          }, 500); // Try again after a short delay
+        }
+      });
+
+      // Initialize NotificationSystem if not present
+      window.NotificationSystem = window.NotificationSystem || {
+        addNotification: function (type, message, amount) {
+          console.log("Notification:", type, message, amount);
+        },
+        init: function () {},
+      };
+
+      // Dashboard-specific functions
+      function refreshDashboard() {
+        if (window.app) {
+          window.app.updateUI();
+          updateDashboardMetrics();
+          updateRecentActivity();
+          updateBudgetOverview();
+          updateSmartInsights();
+          updateProfilePreview();
+          window.app.showToast("Dashboard refreshed!", "success");
+        }
+      }
+
+      function showBudgetModal() {
+        if (window.openModal) {
+          window.openModal("budgetModal");
+        }
+      }
+
+      function generateInsights() {
+        updateSmartInsights();
+        window.app && window.app.showToast("Insights updated!", "info");
+      }
+
+      // Update dashboard metrics
+      function updateDashboardMetrics() {
+        const transactions = JSON.parse(
+          localStorage.getItem("transactions") || "[]"
+        );
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        // Calculate current month data
+        const currentMonthTransactions = transactions.filter((t) => {
+          const transDate = new Date(t.date);
+          return (
+            transDate.getMonth() === currentMonth &&
+            transDate.getFullYear() === currentYear
+          );
+        });
+
+        const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+        const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+        const prevMonthTransactions = transactions.filter((t) => {
+          const transDate = new Date(t.date);
+          return (
+            transDate.getMonth() === prevMonth &&
+            transDate.getFullYear() === prevYear
+          );
+        });
+
+        // Calculate totals
+        const currentIncome = currentMonthTransactions
+          .filter((t) => t.type === "income")
+          .reduce((sum, t) => sum + t.amount, 0);
+
+        const currentExpenses = currentMonthTransactions
+          .filter((t) => t.type === "expense")
+          .reduce((sum, t) => sum + t.amount, 0);
+
+        const prevIncome = prevMonthTransactions
+          .filter((t) => t.type === "income")
+          .reduce((sum, t) => sum + t.amount, 0);
+
+        const prevExpenses = prevMonthTransactions
+          .filter((t) => t.type === "expense")
+          .reduce((sum, t) => sum + t.amount, 0);
+
+        const balance = currentIncome - currentExpenses;
+        const savingsRate =
+          currentIncome > 0
+            ? ((currentIncome - currentExpenses) / currentIncome) * 100
+            : 0;
+
+        // Calculate changes
+        const incomeChange =
+          prevIncome > 0
+            ? ((currentIncome - prevIncome) / prevIncome) * 100
+            : 0;
+        const expenseChange =
+          prevExpenses > 0
+            ? ((currentExpenses - prevExpenses) / prevExpenses) * 100
+            : 0;
+
+        // Update UI
+        document.getElementById("dashboardBalance").textContent =
+          formatCurrency(balance);
+        document.getElementById("monthIncome").textContent =
+          formatCurrency(currentIncome);
+        document.getElementById("monthExpense").textContent =
+          formatCurrency(currentExpenses);
+        document.getElementById("savingsRate").textContent =
+          savingsRate.toFixed(1) + "%";
+
+        // Update change indicators
+        updateChangeIndicator("incomeChange", incomeChange);
+        updateChangeIndicator("expenseChange", expenseChange);
+
+        // Update dashboard date
+        document.getElementById("dashboardDate").textContent = formatDate(
+          new Date()
+        );
+      }
+
+      function updateChangeIndicator(elementId, change) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+
+        const absChange = Math.abs(change);
+        element.textContent = `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`;
+
+        element.className = `metric-change ${
+          change >= 0 ? "positive" : "negative"
+        }`;
+      }
+
+      // Update recent activity
+      function updateRecentActivity() {
+        const transactions = JSON.parse(
+          localStorage.getItem("transactions") || "[]"
+        );
+        const recentTransactions = transactions
+          .sort(
+            (a, b) =>
+              new Date(b.date + " " + (b.time || "00:00")) -
+              new Date(a.date + " " + (a.time || "00:00"))
+          )
+          .slice(0, 5);
+
+        const activityContainer = document.getElementById("recentActivity");
+
+        if (recentTransactions.length === 0) {
+          activityContainer.innerHTML = `
+            <div class="empty-activity">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>
+              </svg>
+              <p>No recent activity</p>
+            </div>
+          `;
+          return;
+        }
+
+        activityContainer.innerHTML = recentTransactions
+          .map(
+            (transaction) => `
+          <div class="activity-item">
+            <div class="activity-icon ${transaction.type}">
+              ${transaction.type === "income" ? "📈" : "📉"}
+            </div>
+            <div class="activity-info">
+              <div class="activity-title">${getCategoryName(
+                transaction.type,
+                transaction.category
+              )}</div>
+              <div class="activity-details">${
+                transaction.description || "No description"
+              }</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="activity-amount ${transaction.type}">${formatCurrency(
+              transaction.amount
+            )}</div>
+              <div class="activity-time">${formatRelativeTime(
+                transaction.date,
+                transaction.time
+              )}</div>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      // Update budget overview
+      function updateBudgetOverview() {
+        const budget = JSON.parse(localStorage.getItem("budget") || "{}");
+        const currentDate = new Date();
+        const currentMonthKey = `${currentDate.getFullYear()}-${String(
+          currentDate.getMonth() + 1
+        ).padStart(2, "0")}`;
+        const monthlyBudget = budget[currentMonthKey];
+
+        const budgetContainer = document.getElementById("budgetOverview");
+        
+        // Check if element exists
+        if (!budgetContainer) {
+          console.warn("Budget container element not found");
+          return;
+        }
+
+        if (!monthlyBudget) {
+          budgetContainer.innerHTML = `
+            <div class="budget-overview-card">
+              <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 1rem; opacity: 0.5;">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <p>No budget set for this month</p>
+                <button class="action-button primary" onclick="showBudgetModal()" style="margin-top: 1rem;">Set Budget</button>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        const transactions = JSON.parse(
+          localStorage.getItem("transactions") || "[]"
+        );
+        const currentExpenses = transactions
+          .filter((t) => {
+            const transDate = new Date(t.date);
+            return (
+              t.type === "expense" &&
+              transDate.getMonth() === currentDate.getMonth() &&
+              transDate.getFullYear() === currentDate.getFullYear()
+            );
+          })
+          .reduce((sum, t) => sum + t.amount, 0);
+
+        const percentage =
+          monthlyBudget.budget > 0
+            ? (currentExpenses / monthlyBudget.budget) * 100
+            : 0;
+        const remaining = monthlyBudget.budget - currentExpenses;
+
+        budgetContainer.innerHTML = `
+          <div class="budget-overview-card">
+            <div class="budget-circle" style="background: conic-gradient(var(--primary-color) ${
+              Math.min(percentage, 100) * 3.6
+            }deg, var(--bg-secondary) 0deg);">
+              <div class="budget-percentage">${percentage.toFixed(0)}%</div>
+            </div>
+            <div class="budget-label">Budget Used</div>
+            <div class="budget-amount">
+              ${formatCurrency(remaining)} remaining
+            </div>
+          </div>
+        `;
+      }
+
+      // Update smart insights
+      function updateSmartInsights() {
+        const transactions = JSON.parse(
+          localStorage.getItem("transactions") || "[]"
+        );
+        const insights = generateFinancialInsights(transactions);
+
+        const insightsContainer = document.getElementById("smartInsights");
+
+        if (insights.length === 0) {
+          insightsContainer.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 1rem; opacity: 0.5;">
+                <path d="M9 11H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h4m6-6h4a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-4m-6 0a2 2 0 0 0-2-2v-3a2 2 0 0 0 2-2m6 0a2 2 0 0 1 2-2v-3a2 2 0 0 1-2-2"/>
+              </svg>
+              <p>Add some transactions to see insights</p>
+            </div>
+          `;
+          return;
+        }
+
+        insightsContainer.innerHTML = insights
+          .map(
+            (insight) => `
+          <div class="insight-item">
+            <div class="insight-icon">${insight.icon}</div>
+            <div class="insight-content">
+              <div class="insight-title">${insight.title}</div>
+              <div class="insight-description">${insight.description}</div>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      // Generate financial insights
+      function generateFinancialInsights(transactions) {
+        const insights = [];
+        const currentDate = new Date();
+
+        // Get current month transactions
+        const currentMonthTransactions = transactions.filter((t) => {
+          const transDate = new Date(t.date);
+          return (
+            transDate.getMonth() === currentDate.getMonth() &&
+            transDate.getFullYear() === currentDate.getFullYear()
+          );
+        });
+
+        const expenses = currentMonthTransactions.filter(
+          (t) => t.type === "expense"
+        );
+
+        if (expenses.length > 0) {
+          // Find highest expense category
+          const categoryTotals = {};
+          expenses.forEach((t) => {
+            categoryTotals[t.category] =
+              (categoryTotals[t.category] || 0) + t.amount;
+          });
+
+          const highestCategory = Object.entries(categoryTotals).sort(
+            ([, a], [, b]) => b - a
+          )[0];
+
+          if (highestCategory) {
+            insights.push({
+              icon: "📊",
+              title: "Top Expense Category",
+              description: `${getCategoryName(
+                "expense",
+                highestCategory[0]
+              )} accounts for ${formatCurrency(
+                highestCategory[1]
+              )} of your spending this month.`,
+            });
+          }
+
+          // Average daily spending
+          const daysInMonth = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth() + 1,
+            0
+          ).getDate();
+          const currentDay = currentDate.getDate();
+          const totalExpenses = expenses.reduce((sum, t) => sum + t.amount, 0);
+          const avgDaily = totalExpenses / currentDay;
+          const projectedMonthly = avgDaily * daysInMonth;
+
+          insights.push({
+            icon: "📈",
+            title: "Spending Projection",
+            description: `At your current pace, you'll spend ${formatCurrency(
+              projectedMonthly
+            )} this month (${formatCurrency(avgDaily)} per day).`,
+          });
+        }
+
+        // Savings insight
+        const income = currentMonthTransactions
+          .filter((t) => t.type === "income")
+          .reduce((sum, t) => sum + t.amount, 0);
+        const totalExpenses = currentMonthTransactions
+          .filter((t) => t.type === "expense")
+          .reduce((sum, t) => sum + t.amount, 0);
+
+        if (income > 0) {
+          const savingsRate = ((income - totalExpenses) / income) * 100;
+          const icon =
+            savingsRate >= 20 ? "🎯" : savingsRate >= 10 ? "💡" : "⚠️";
+          const message =
+            savingsRate >= 20
+              ? "Great job!"
+              : savingsRate >= 10
+              ? "Good progress!"
+              : "Consider reducing expenses.";
+
+          insights.push({
+            icon: icon,
+            title: "Savings Rate",
+            description: `You're saving ${savingsRate.toFixed(
+              1
+            )}% of your income this month. ${message}`,
+          });
+        }
+
+        return insights;
+      }
+
+      // Update profile preview
+      function updateProfilePreview() {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        const transactions = JSON.parse(
+          localStorage.getItem("transactions") || "[]"
+        );
+
+        const profileContainer = document.getElementById("profilePreview");
+
+        const totalTransactions = transactions.length;
+        const daysSinceJoined = Math.floor(
+          (Date.now() - new Date(user.joinDate || Date.now()).getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
+
+        profileContainer.innerHTML = `
+          <div class="profile-avatar-mini">👤</div>
+          <div class="profile-name">${user.name || "Pengguna Tamu"}</div>
+          <div class="profile-stats-mini">
+            <div class="profile-stat-mini">
+              <div class="profile-stat-value">${totalTransactions}</div>
+              <div class="profile-stat-label">Transactions</div>
+            </div>
+            <div class="profile-stat-mini">
+              <div class="profile-stat-value">${daysSinceJoined}</div>
+              <div class="profile-stat-label">Days Active</div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Utility functions
+      function formatCurrency(amount) {
+        if (window.Utils && window.Utils.formatCurrency) {
+          return window.Utils.formatCurrency(amount);
+        }
+        return `Rp ${amount.toLocaleString("id-ID")}`;
+      }
+
+      function formatDate(date) {
+        return new Intl.DateTimeFormat("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }).format(date);
+      }
+
+      function formatRelativeTime(date, time = "00:00") {
+        const transactionDate = new Date(date + " " + time);
+        const now = new Date();
+        const diffMs = now - transactionDate;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 0) return "Today";
+        if (diffDays === 1) return "Yesterday";
+        if (diffDays < 7) return `${diffDays} days ago`;
+        return transactionDate.toLocaleDateString("id-ID");
+      }
+
+      function getCategoryName(type, category) {
+        // Default categories fallback
+        const defaultCategories = {
+          expense: {
+            makanan: { name: "Makanan & Minuman", icon: "🍽️" },
+            transportasi: { name: "Transportasi", icon: "🚗" },
+            belanja: { name: "Belanja", icon: "🛒" },
+            hiburan: { name: "Hiburan", icon: "🎬" },
+            kesehatan: { name: "Kesehatan", icon: "🏥" },
+            pendidikan: { name: "Pendidikan", icon: "📚" },
+            tagihan: { name: "Tagihan", icon: "💳" },
+            lainnya: { name: "Lainnya", icon: "📝" },
+          },
+          income: {
+            gaji: { name: "Gaji", icon: "💰" },
+            freelance: { name: "Freelance", icon: "💻" },
+            bisnis: { name: "Bisnis", icon: "🏢" },
+            investasi: { name: "Investasi", icon: "📈" },
+            hadiah: { name: "Hadiah", icon: "🎁" },
+            lainnya: { name: "Lainnya", icon: "💵" },
+          },
+        };
+
+        // Try to get from app categories first
+        if (
+          window.app &&
+          window.app.categories &&
+          window.app.categories[type] &&
+          window.app.categories[type][category]
+        ) {
+          const cat = window.app.categories[type][category];
+          return `${cat.icon || ""} ${cat.name}`;
+        }
+
+        // Fallback to default categories
+        if (defaultCategories[type] && defaultCategories[type][category]) {
+          const cat = defaultCategories[type][category];
+          return `${cat.icon || ""} ${cat.name}`;
+        }
+
+        // Final fallback
+        return category || "Unknown";
+      }
+
+      // Initialize dashboard data when loaded
+      function initializeDashboard() {
+        updateDashboardMetrics();
+        updateRecentActivity();
+        updateBudgetOverview();
+        updateSmartInsights();
+        updateProfilePreview();
+      }
+
+      // Enhanced initialization
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set up service worker
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", function () {
+            navigator.serviceWorker
+              .register("sw.js")
+              .then(function (registration) {
+                console.log("SW registered with scope: ", registration.scope);
+              })
+              .catch(function (err) {
+                console.log("SW registration failed: ", err);
+              });
+          });
+        }
+
+        // Ensure ExpenseTracker is loaded before using it
+        if (window.ExpenseTracker) {
+          window.app = window.ExpenseTracker;
+          window.app.init();
+          // Show only dashboard section
+          window.app.showSection("dashboard");
+          // Initialize dashboard-specific data
+          setTimeout(initializeDashboard, 200);
+        } else {
+          console.error(
+            "ExpenseTracker not found. Make sure app.js is loaded correctly."
+          );
+          setTimeout(() => {
+            if (window.ExpenseTracker) {
+              window.app = window.ExpenseTracker;
+              window.app.init();
+              window.app.showSection("dashboard");
+              initializeDashboard();
+            }
+          }, 500); // Try again after a short delay
+        }
+      });
+    </script>
+  </body>
+</html>

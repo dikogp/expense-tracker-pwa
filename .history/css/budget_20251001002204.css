@@ -1,0 +1,143 @@
+/* Budget Section Styles */
+.budget-section {
+  background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.budget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.budget-header h2 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.budget-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.budget-month {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.budget-amount {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.budget-progress {
+  margin: 1rem 0;
+}
+
+.progress-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00b09b, #96c93d);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.budget-remaining {
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-align: right;
+  padding-top: 0.5rem;
+}
+
+.budget-remaining.negative {
+  color: #ff7675;
+}
+
+/* Status Card Styles */
+.status-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.status-card-header {
+  margin-bottom: 0.75rem;
+}
+
+.status-card-header h3 {
+  font-size: 1rem;
+  color: #333;
+  margin: 0;
+}
+
+.budget-status {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+}
+
+.status-indicator.normal {
+  background: #4CAF50;
+}
+
+.status-indicator.warning {
+  background: #FFC107;
+}
+
+.status-indicator.critical {
+  background: #FF5722;
+}
+
+.status-indicator.good {
+  background: #2196F3;
+}
+
+.status-indicator.unset {
+  background: #9E9E9E;
+}
+
+.status-message {
+  flex: 1;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.status-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.85rem;
+  color: #666;
+}

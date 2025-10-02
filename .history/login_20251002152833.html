@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Masuk - Pengeluaranqu</title>
+    <meta
+      name="description"
+      content="Masuk atau daftar untuk mulai mengelola keuangan Anda."
+    />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/style.css" />
+    <meta name="theme-color" content="#3b82f6" />
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg" />
+  </head>
+  <body>
+    <div id="toast-container"></div>
+    <div id="app">
+      <div id="authScreen" class="auth-screen active">
+        <div class="auth-container">
+          <div class="auth-header">
+            <div class="logo-large">
+              <i class="icon-wallet"></i>
+              <h1>Pengeluaranqu</h1>
+              <p>Kelola keuangan harian dengan mudah</p>
+            </div>
+          </div>
+          <div id="loginForm" class="auth-form active">
+            <h2>Masuk ke Akun Anda</h2>
+            <form id="loginFormElement">
+              <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input
+                  type="email"
+                  id="loginEmail"
+                  name="email"
+                  required
+                  placeholder="nama@email.com"
+                />
+              </div>
+              <div class="form-group">
+                <label for="loginPassword">Kata Sandi</label>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  name="password"
+                  required
+                  placeholder="Masukkan kata sandi"
+                />
+              </div>
+              <button type="submit" class="btn-primary">Masuk</button>
+            </form>
+            <div class="auth-divider"><span>atau</span></div>
+            <button class="btn-guest" onclick="Auth.loginAsGuest()">
+              Masuk sebagai Tamu
+            </button>
+            <button class="btn-google" onclick="Auth.loginWithGoogle()">
+              Masuk dengan Google
+            </button>
+            <p class="auth-switch">
+              Belum punya akun?
+              <button type="button" onclick="showRegister()" class="btn-text">
+                Daftar di sini
+              </button>
+            </p>
+          </div>
+          <div id="registerForm" class="auth-form">
+            <h2>Buat Akun Baru</h2>
+            <form id="registerFormElement">
+              <div class="form-group">
+                <label for="registerName">Nama</label>
+                <input
+                  type="text"
+                  id="registerName"
+                  name="name"
+                  required
+                  placeholder="Nama lengkap"
+                />
+              </div>
+              <div class="form-group">
+                <label for="registerEmail">Email</label>
+                <input
+                  type="email"
+                  id="registerEmail"
+                  name="email"
+                  required
+                  placeholder="nama@email.com"
+                />
+              </div>
+              <div class="form-group">
+                <label for="registerPassword">Kata Sandi</label>
+                <input
+                  type="password"
+                  id="registerPassword"
+                  name="password"
+                  required
+                  placeholder="Minimal 6 karakter"
+                />
+              </div>
+              <button type="submit" class="btn-primary">Daftar</button>
+            </form>
+            <p class="auth-switch">
+              Sudah punya akun?
+              <button type="button" onclick="showLogin()" class="btn-text">
+                Masuk di sini
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notification.js"></script>
+    <script>
+      function showLogin() {
+        document.getElementById("loginForm").classList.add("active");
+        document.getElementById("registerForm").classList.remove("active");
+      }
+      function showRegister() {
+        document.getElementById("loginForm").classList.remove("active");
+        document.getElementById("registerForm").classList.add("active");
+      }
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.Auth) {
+          window.Auth.init();
+        }
+      });
+    </script>
+  </body>
+</html>

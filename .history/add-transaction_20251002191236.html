@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tambah Transaksi - Pengeluaranqu</title>
+    <meta
+      name="description"
+      content="Tambah transaksi pemasukan dan pengeluaran"
+    />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pengeluaranqu" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.svg" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Content Security Policy -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self';"
+    />
+  </head>
+  <body>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <div id="app">
+      <!-- Authentication Screen -->
+      <div id="authScreen" class="auth-screen">
+        <div class="auth-container">
+          <div class="auth-header">
+            <div class="logo-large">
+              <i class="icon-wallet"></i>
+              <h1>Pengeluaranqu</h1>
+              <p>Kelola keuangan harian dengan mudah</p>
+            </div>
+          </div>
+          <div id="loginForm" class="auth-form active">
+            <h2>Masuk ke Akun Anda</h2>
+            <form id="loginFormElement">
+              <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input
+                  type="email"
+                  id="loginEmail"
+                  name="email"
+                  required
+                  placeholder="nama@email.com"
+                />
+              </div>
+              <div class="form-group">
+                <label for="loginPassword">Kata Sandi</label>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  name="password"
+                  required
+                  placeholder="Masukkan kata sandi"
+                />
+              </div>
+              <button type="submit" class="btn-primary">Masuk</button>
+            </form>
+            <div class="auth-divider"><span>atau</span></div>
+            <button class="btn-guest" onclick="Auth.loginAsGuest()">
+              Masuk sebagai Tamu
+            </button>
+            <button class="btn-google" onclick="Auth.loginWithGoogle()">
+              Masuk dengan Google
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Main Application -->
+      <div id="mainApp" class="main-app">
+        <!-- Header -->
+        <header class="header">
+          <div class="container">
+            <div
+              class="logo clickable-logo"
+              onclick="window.location.href = 'dashboard.html'"
+            >
+              <span class="logo-icon">💰</span>
+              <h1>Pengeluaranqu</h1>
+            </div>
+            <div class="header-info">
+              <div class="user-greeting">
+                <span class="greeting-text" id="greetingText"
+                  >Selamat datang,</span
+                >
+                <span class="user-name" id="headerUserName">Pengguna</span>
+              </div>
+              <!-- Hamburger Menu Button -->
+              <button
+                class="hamburger-menu"
+                onclick="toggleHamburgerMenu()"
+                id="hamburgerBtn"
+              >
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Hamburger Menu Dropdown -->
+          <div class="hamburger-dropdown" id="hamburgerDropdown">
+            <div class="hamburger-menu-content">
+              <a href="dashboard.html" class="hamburger-menu-item">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Dashboard</span>
+              </a>
+              <a href="add-transaction.html" class="hamburger-menu-item active">
+                <span class="menu-icon">➕</span>
+                <span class="menu-text">Tambah Transaksi</span>
+              </a>
+              <a href="history.html" class="hamburger-menu-item">
+                <span class="menu-icon">📋</span>
+                <span class="menu-text">Riwayat</span>
+              </a>
+              <a
+                href="analytics.html"
+                class="hamburger-menu-item premium-item"
+                onclick="checkPremiumFeature('advancedReports')"
+              >
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Analisis</span>
+                <span class="premium-badge">⭐</span>
+              </a>
+              <a href="profile.html" class="hamburger-menu-item">
+                <span class="menu-icon">👤</span>
+                <span class="menu-text">Profil</span>
+              </a>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <!-- Add Transaction Content -->
+          <section id="add-transaction" class="tab-content active">
+            <div class="container">
+              <div class="transaction-type-tabs">
+                <button class="type-tab active" data-type="expense">
+                  ➖ Pengeluaran
+                </button>
+                <button class="type-tab" data-type="income">
+                  ➕ Pemasukan
+                </button>
+              </div>
+
+              <form id="transactionForm" class="transaction-form">
+                <input
+                  type="hidden"
+                  id="transactionType"
+                  name="type"
+                  value="expense"
+                />
+
+                <div class="form-group">
+                  <label for="amount">💰 Jumlah</label>
+                  <div class="amount-input">
+                    <span class="currency">Rp</span>
+                    <input
+                      type="text"
+                      inputmode="numeric"
+                      id="amount"
+                      name="amount"
+                      placeholder="0"
+                      required
+                      autofocus
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="category">📂 Kategori</label>
+                  <select id="category" name="category" required>
+                    <!-- Categories populated by JS -->
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="description">📝 Deskripsi (opsional)</label>
+                  <input
+                    type="text"
+                    id="description"
+                    name="description"
+                    placeholder="Contoh: Makan siang di warung"
+                  />
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="date">📅 Tanggal</label>
+                    <input type="date" id="date" name="date" required />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="time">🕐 Waktu</label>
+                    <input type="time" id="time" name="time" required />
+                  </div>
+                </div>
+
+                <button type="submit" class="btn-primary btn-large">
+                  💾 Simpan Transaksi
+                </button>
+              </form>
+            </div>
+          </section>
+        </main>
+
+        <!-- Bottom navigation removed - using hamburger menu only for consistency -->
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+      // Global authentication functions
+      window.Auth = {
+        loginAsGuest: function () {
+          const guestData = {
+            isAuthenticated: true,
+            isGuest: true,
+            id: "guest",
+            name: "Pengguna Tamu",
+            email: "",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(guestData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+
+        loginWithGoogle: function () {
+          console.log("Google login clicked");
+          // Mock Google login for demo
+          const userData = {
+            isAuthenticated: true,
+            isGuest: false,
+            id: "google_123",
+            name: "Pengguna Google",
+            email: "user@gmail.com",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(userData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+      };
+
+      // Hamburger Menu Functions
+      function toggleHamburgerMenu() {
+        const dropdown = document.getElementById("hamburgerDropdown");
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+
+        if (dropdown.classList.contains("active")) {
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        } else {
+          dropdown.classList.add("active");
+          hamburgerBtn.classList.add("active");
+        }
+      }
+
+      // Close hamburger menu when clicking outside
+      document.addEventListener("click", function (event) {
+        const dropdown = document.getElementById("hamburgerDropdown");
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+
+        if (
+          !hamburgerBtn.contains(event.target) &&
+          !dropdown.contains(event.target)
+        ) {
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        }
+      });
+
+      // Close hamburger menu when clicking menu items
+      document.addEventListener("click", function (event) {
+        if (event.target.closest(".hamburger-menu-item")) {
+          const dropdown = document.getElementById("hamburgerDropdown");
+          const hamburgerBtn = document.getElementById("hamburgerBtn");
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        }
+      });
+
+      // Premium feature check function
+      function checkPremiumFeature(feature) {
+        if (window.app && window.app.showToast) {
+          window.app.showToast("Fitur Premium - Coming Soon!", "info");
+        } else {
+          console.log("Premium feature:", feature);
+        }
+        return false;
+      }
+
+      // Initialize app for add transaction
+      document.addEventListener("DOMContentLoaded", function () {
+        // Ensure ExpenseTracker is loaded before using it
+        if (window.ExpenseTracker) {
+          window.app = window.ExpenseTracker;
+          window.app.init();
+          // Show only add-transaction section
+          window.app.showSection("add-transaction");
+        } else {
+          console.error(
+            "ExpenseTracker not found. Make sure app.js is loaded correctly."
+          );
+          
+          // Enhanced error handling with multiple fallbacks
+          let retryCount = 0;
+          const maxRetries = 5;
+          
+          function retryInit() {
+            retryCount++;
+            console.log(`Retry attempt ${retryCount}/${maxRetries}`);
+            
+            if (window.ExpenseTracker) {
+              console.log("ExpenseTracker found on retry");
+              window.app = window.ExpenseTracker;
+              window.app.init();
+              window.app.showSection("add-transaction");
+              return;
+            }
+            
+            if (retryCount < maxRetries) {
+              setTimeout(retryInit, 200 * retryCount); // Progressive delay
+            } else {
+              console.error("Failed to load ExpenseTracker after maximum retries");
+              // Fallback: Show basic form without full app functionality
+              document.getElementById('mainApp').style.display = 'block';
+              document.getElementById('authScreen').style.display = 'none';
+            }
+          }
+          
+          setTimeout(retryInit, 100);
+        }
+      });
+    </script>
+  </body>
+</html>

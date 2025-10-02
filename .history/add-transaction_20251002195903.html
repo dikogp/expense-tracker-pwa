@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tambah Transaksi - Pengeluaranqu</title>
+    <meta
+      name="description"
+      content="Tambah transaksi pemasukan dan pengeluaran"
+    />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pengeluaranqu" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.svg" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/modern-ui.css" />
+
+    <!-- Content Security Policy -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self';"
+    />
+  </head>
+  <body>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <div id="app">
+      <!-- Authentication Screen -->
+      <div id="authScreen" class="auth-screen">
+        <div class="auth-container">
+          <div class="auth-header">
+            <div class="logo-large">
+              <i class="icon-wallet"></i>
+              <h1>Pengeluaranqu</h1>
+              <p>Kelola keuangan harian dengan mudah</p>
+            </div>
+          </div>
+          <div id="loginForm" class="auth-form active">
+            <h2>Masuk ke Akun Anda</h2>
+            <form id="loginFormElement">
+              <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input
+                  type="email"
+                  id="loginEmail"
+                  name="email"
+                  required
+                  placeholder="nama@email.com"
+                />
+              </div>
+              <div class="form-group">
+                <label for="loginPassword">Kata Sandi</label>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  name="password"
+                  required
+                  placeholder="Masukkan kata sandi"
+                />
+              </div>
+              <button type="submit" class="btn-primary">Masuk</button>
+            </form>
+            <div class="auth-divider"><span>atau</span></div>
+            <button class="btn-guest" onclick="Auth.loginAsGuest()">
+              Masuk sebagai Tamu
+            </button>
+            <button class="btn-google" onclick="Auth.loginWithGoogle()">
+              Masuk dengan Google
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Main Application -->
+      <div id="mainApp" class="main-app">
+        <!-- Header -->
+        <header class="header">
+          <div class="container">
+            <div
+              class="logo clickable-logo"
+              onclick="window.location.href = 'dashboard.html'"
+            >
+              <span class="logo-icon">💰</span>
+              <h1>Pengeluaranqu</h1>
+            </div>
+            <div class="header-info">
+              <div class="user-greeting">
+                <span class="greeting-text" id="greetingText"
+                  >Selamat datang,</span
+                >
+                <span class="user-name" id="headerUserName">Pengguna</span>
+              </div>
+              <!-- Hamburger Menu Button -->
+              <button
+                class="hamburger-menu"
+                onclick="toggleHamburgerMenu()"
+                id="hamburgerBtn"
+              >
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Hamburger Menu Dropdown -->
+          <div class="hamburger-dropdown" id="hamburgerDropdown">
+            <div class="hamburger-menu-content">
+              <a href="dashboard.html" class="hamburger-menu-item">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Dashboard</span>
+              </a>
+              <a href="add-transaction.html" class="hamburger-menu-item active">
+                <span class="menu-icon">➕</span>
+                <span class="menu-text">Tambah Transaksi</span>
+              </a>
+              <a href="history.html" class="hamburger-menu-item">
+                <span class="menu-icon">📋</span>
+                <span class="menu-text">Riwayat</span>
+              </a>
+              <a
+                href="analytics.html"
+                class="hamburger-menu-item premium-item"
+                onclick="checkPremiumFeature('advancedReports')"
+              >
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Analisis</span>
+                <span class="premium-badge">⭐</span>
+              </a>
+              <a href="profile.html" class="hamburger-menu-item">
+                <span class="menu-icon">👤</span>
+                <span class="menu-text">Profil</span>
+              </a>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+                <!-- Main Content -->
+        <main class="main">
+          <!-- Add Transaction Form -->
+          <section id="addTransaction" class="tab-content active">
+            <div class="container">
+              <!-- Modern Header Section -->
+              <div class="page-header-modern">
+                <div class="header-content">
+                  <div class="header-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </div>
+                  <div class="header-text">
+                    <h1>Add Transaction</h1>
+                    <p>Record your income and expenses easily</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modern Transaction Form Card -->
+              <div class="transaction-form-card glass-card">
+                <!-- Enhanced Type Selection -->
+                <div class="transaction-type-modern">
+                  <h3 class="section-title">Transaction Type</h3>
+                  <div class="type-selector-grid">
+                    <button type="button" class="type-card active" data-type="expense">
+                      <div class="type-icon expense">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                          <circle cx="8.5" cy="7" r="4" />
+                          <line x1="20" y1="8" x2="20" y2="14" />
+                          <line x1="23" y1="11" x2="17" y2="11" />
+                        </svg>
+                      </div>
+                      <div class="type-content">
+                        <h4>Expense</h4>
+                        <p>Money going out</p>
+                      </div>
+                    </button>
+                    <button type="button" class="type-card" data-type="income">
+                      <div class="type-icon income">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                          <circle cx="8.5" cy="7" r="4" />
+                          <line x1="20" y1="8" x2="20" y2="14" />
+                          <line x1="17" y1="11" x2="23" y2="11" />
+                        </svg>
+                      </div>
+                      <div class="type-content">
+                        <h4>Income</h4>
+                        <p>Money coming in</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                <form id="transactionForm" data-type="expense" class="modern-form">
+                  <!-- Modern Amount Input -->
+                  <div class="form-section">
+                    <h3 class="section-title">Amount Details</h3>
+                    <div class="form-group-modern amount-group-modern">
+                      <label for="amount" class="form-label-modern">
+                        <span class="label-icon">💰</span>
+                        Amount
+                      </label>
+                      <div class="amount-input-modern">
+                        <span class="currency-symbol">Rp</span>
+                        <input
+                          type="text"
+                          inputmode="numeric"
+                          id="amount"
+                          name="amount"
+                          required
+                          placeholder="0"
+                          autocomplete="off"
+                          class="amount-field"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Transaction Details Section -->
+                  <div class="form-section">
+                    <h3 class="section-title">Transaction Details</h3>
+                    <div class="form-grid">
+                      <!-- Category Selection -->
+                      <div class="form-group-modern">
+                        <label for="category" class="form-label-modern">
+                          <span class="label-icon">📂</span>
+                          Category
+                        </label>
+                        <div class="select-wrapper-modern">
+                          <select id="category" name="category" required class="select-modern">
+                            <option value="">Choose category</option>
+                          </select>
+                          <div class="select-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <polyline points="6,9 12,15 18,9" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Description -->
+                      <div class="form-group-modern">
+                        <label for="description" class="form-label-modern">
+                          <span class="label-icon">📝</span>
+                          Description
+                        </label>
+                        <input
+                          type="text"
+                          id="description"
+                          name="description"
+                          placeholder="Optional description..."
+                          class="input-modern"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Date & Time Section -->
+                  <div class="form-section">
+                    <h3 class="section-title">Date & Time</h3>
+                    <div class="datetime-grid">
+                      <div class="form-group-modern">
+                        <label for="date" class="form-label-modern">
+                          <span class="label-icon">📅</span>
+                          Date
+                        </label>
+                        <input type="date" id="date" name="date" required class="input-modern" />
+                      </div>
+
+                      <div class="form-group-modern">
+                        <label for="time" class="form-label-modern">
+                          <span class="label-icon">🕐</span>
+                          Time
+                        </label>
+                        <input type="time" id="time" name="time" required class="input-modern" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="form-actions-modern">
+                    <button type="button" class="btn-secondary-modern" onclick="history.back()">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                      </svg>
+                      Cancel
+                    </button>
+                    <button type="submit" class="btn-primary-modern">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                        <polyline points="17,21 17,13 7,13 7,21" />
+                        <polyline points="7,3 7,8 15,8" />
+                      </svg>
+                      Save Transaction
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Quick Action Suggestions -->
+              <div class="quick-suggestions glass-card">
+                <h3 class="section-title">Quick Actions</h3>
+                <div class="suggestion-grid">
+                  <button class="suggestion-item" data-amount="50000" data-category="food" data-description="Lunch">
+                    <span class="suggestion-icon">🍽️</span>
+                    <span class="suggestion-text">Quick Lunch</span>
+                    <span class="suggestion-amount">Rp 50K</span>
+                  </button>
+                  <button class="suggestion-item" data-amount="15000" data-category="transportation" data-description="Transport">
+                    <span class="suggestion-icon">🚗</span>
+                    <span class="suggestion-text">Transport</span>
+                    <span class="suggestion-amount">Rp 15K</span>
+                  </button>
+                  <button class="suggestion-item" data-amount="25000" data-category="coffee" data-description="Coffee">
+                    <span class="suggestion-icon">☕</span>
+                    <span class="suggestion-text">Coffee</span>
+                    <span class="suggestion-amount">Rp 25K</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <!-- Bottom navigation removed - using hamburger menu only for consistency -->
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+      // Global authentication functions
+      window.Auth = {
+        loginAsGuest: function () {
+          const guestData = {
+            isAuthenticated: true,
+            isGuest: true,
+            id: "guest",
+            name: "Pengguna Tamu",
+            email: "",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(guestData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+
+        loginWithGoogle: function () {
+          console.log("Google login clicked");
+          // Mock Google login for demo
+          const userData = {
+            isAuthenticated: true,
+            isGuest: false,
+            id: "google_123",
+            name: "Pengguna Google",
+            email: "user@gmail.com",
+            avatar: "/icons/icon-192x192.svg",
+          };
+          localStorage.setItem("user", JSON.stringify(userData));
+          setTimeout(() => {
+            if (window.app) {
+              window.app.init();
+            }
+          }, 100);
+        },
+      };
+
+      // Hamburger Menu Functions
+      function toggleHamburgerMenu() {
+        const dropdown = document.getElementById("hamburgerDropdown");
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+
+        if (dropdown.classList.contains("active")) {
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        } else {
+          dropdown.classList.add("active");
+          hamburgerBtn.classList.add("active");
+        }
+      }
+
+      // Close hamburger menu when clicking outside
+      document.addEventListener("click", function (event) {
+        const dropdown = document.getElementById("hamburgerDropdown");
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+
+        if (
+          !hamburgerBtn.contains(event.target) &&
+          !dropdown.contains(event.target)
+        ) {
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        }
+      });
+
+      // Close hamburger menu when clicking menu items
+      document.addEventListener("click", function (event) {
+        if (event.target.closest(".hamburger-menu-item")) {
+          const dropdown = document.getElementById("hamburgerDropdown");
+          const hamburgerBtn = document.getElementById("hamburgerBtn");
+          dropdown.classList.remove("active");
+          hamburgerBtn.classList.remove("active");
+        }
+      });
+
+      // Premium feature check function
+      function checkPremiumFeature(feature) {
+        if (window.app && window.app.showToast) {
+          window.app.showToast("Fitur Premium - Coming Soon!", "info");
+        } else {
+          console.log("Premium feature:", feature);
+        }
+        return false;
+      }
+
+      // Modern UI Event Handlers
+      function initializeModernUI() {
+        // Transaction type selection
+        const typeCards = document.querySelectorAll('.type-card');
+        const form = document.getElementById('transactionForm');
+
+        typeCards.forEach(card => {
+          card.addEventListener('click', function() {
+            // Remove active from all cards
+            typeCards.forEach(c => c.classList.remove('active'));
+            // Add active to clicked card
+            this.classList.add('active');
+            // Update form data-type
+            const type = this.getAttribute('data-type');
+            form.setAttribute('data-type', type);
+            
+            // Update categories based on type
+            if (window.app && window.app.updateCategoryOptions) {
+              window.app.updateCategoryOptions(type);
+            }
+          });
+        });
+
+        // Quick suggestion buttons
+        const suggestionItems = document.querySelectorAll('.suggestion-item');
+        suggestionItems.forEach(item => {
+          item.addEventListener('click', function() {
+            const amount = this.getAttribute('data-amount');
+            const category = this.getAttribute('data-category');
+            const description = this.getAttribute('data-description');
+            
+            // Fill form fields
+            const amountInput = document.getElementById('amount');
+            const categorySelect = document.getElementById('category');
+            const descriptionInput = document.getElementById('description');
+            
+            if (amountInput) amountInput.value = parseInt(amount).toLocaleString('id-ID');
+            if (amountInput) amountInput.dataset.rawValue = amount;
+            if (descriptionInput) descriptionInput.value = description;
+            
+            // Try to select category if it exists
+            if (categorySelect) {
+              for (let option of categorySelect.options) {
+                if (option.value === category || option.text.toLowerCase().includes(category.toLowerCase())) {
+                  option.selected = true;
+                  break;
+                }
+              }
+            }
+          });
+        });
+
+        // Set default date and time
+        const dateInput = document.getElementById('date');
+        const timeInput = document.getElementById('time');
+        const now = new Date();
+        
+        if (dateInput) {
+          dateInput.value = now.toISOString().split('T')[0];
+        }
+        if (timeInput) {
+          const hours = now.getHours().toString().padStart(2, '0');
+          const minutes = now.getMinutes().toString().padStart(2, '0');
+          timeInput.value = `${hours}:${minutes}`;
+        }
+      }
+
+      // Initialize app for add transaction
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize modern UI components first
+        initializeModernUI();
+
+        // Ensure ExpenseTracker is loaded before using it
+        if (window.ExpenseTracker) {
+          window.app = window.ExpenseTracker;
+          window.app.init();
+          // Show only add-transaction section
+          window.app.showSection("add-transaction");
+        } else {
+          console.error(
+            "ExpenseTracker not found. Make sure app.js is loaded correctly."
+          );
+
+          // Enhanced error handling with multiple fallbacks
+          let retryCount = 0;
+          const maxRetries = 5;
+
+          function retryInit() {
+            retryCount++;
+            console.log(`Retry attempt ${retryCount}/${maxRetries}`);
+
+            if (window.ExpenseTracker) {
+              console.log("ExpenseTracker found on retry");
+              window.app = window.ExpenseTracker;
+              window.app.init();
+              window.app.showSection("add-transaction");
+              // Re-initialize modern UI after app is loaded
+              initializeModernUI();
+              return;
+            }
+
+            if (retryCount < maxRetries) {
+              setTimeout(retryInit, 200 * retryCount); // Progressive delay
+            } else {
+              console.error(
+                "Failed to load ExpenseTracker after maximum retries"
+              );
+              // Fallback: Show basic form without full app functionality
+              document.getElementById("mainApp").style.display = "block";
+              document.getElementById("authScreen").style.display = "none";
+            }
+          }
+
+          setTimeout(retryInit, 100);
+        }
+      });
+    </script>
+  </body>
+</html>
